@@ -6,6 +6,7 @@ import time
 import docker
 
 def database_backups():
+  print('Starting sonarr backup')
   client = docker.DockerClient(base_url='unix://var/run/docker.sock')
   client.containers.run(image='alpine:latest',
                         auto_remove=True,
@@ -17,6 +18,8 @@ def database_backups():
                         volumes={'/safe01/backups/lmserver/': {'bind': '/host/backups/lmserver', 'mode': 'rw'}},
                         user=8888,
                         working_dir='/host/backups/lmserver')
+  print('Finished sonarr backup')
+  print('Starting radarr backup')
   client.containers.run(image='alpine:latest',
                         auto_remove=True,
                         command='-O radarr.zip http://radarr:7878/api/system/backup?apikey=' + os.environ['RADARR_TOKEN'],
@@ -27,9 +30,10 @@ def database_backups():
                         volumes={'/safe01/backups/lmserver/': {'bind': '/host/backups/lmserver', 'mode': 'rw'}},
                         user=8888,
                         working_dir='/host/backups/lmserver')
-  return schedule.CancelJob
+  print('Finished radarr backup')
 
 def data_backup():
+  print('Starting restic backup to B2')
   client = docker.DockerClient(base_url='unix://var/run/docker.sock')
   client.containers.run(image='restic/restic:latest',
                         auto_remove=True,
@@ -43,9 +47,10 @@ def data_backup():
                         name='restic',
                         volumes={'/safe01/backups': {'bind': '/host/backups', 'mode': 'ro'}}
                        )
-  return schedule.CancelJob
+  print('Finished restic backup to B2')
 
 def photos_backup():
+  print('Starting rclone backup to StackStorage')
   client = docker.DockerClient(base_url='unix://var/run/docker.sock')
   client.containers.run(image='rclone/rclone:latest',
                         auto_remove=True,
@@ -56,7 +61,7 @@ def photos_backup():
                                  'rclone': {'bind': '/config/rclone', 'mode': 'ro'}
                                 }
                        )
-  return schedule.CancelJob
+  print('Finished rclone backup to StackStorage')
 
 schedule.every().day.at("02:00").do(database_backups)
 schedule.every().day.at("02:15").do(data_backup)
