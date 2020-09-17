@@ -41,8 +41,7 @@ def dyndns():
 def backupDatabases():
   print('Starting sonarr backup')
   client = docker.DockerClient(base_url='unix://var/run/docker.sock')
-  client.images.pull('alpine:latest')
-  client.containers.run(image='alpine:latest',
+  client.containers.run(image='alpine:3.12',
                         auto_remove=True,
                         command='-O sonarr.zip http://sonarr:8989/api/system/backup?apikey=' + os.environ['SONARR_TOKEN'],
                         detach=True,
@@ -54,7 +53,7 @@ def backupDatabases():
                         working_dir='/host/lmserver')
   print('Finished sonarr backup')
   print('Starting radarr backup')
-  client.containers.run(image='alpine:latest',
+  client.containers.run(image='alpine:3.12',
                         auto_remove=True,
                         command='-O radarr.zip http://radarr:7878/api/system/backup?apikey=' + os.environ['RADARR_TOKEN'],
                         detach=True,
@@ -70,8 +69,7 @@ def backupDatabases():
 def backupData():
   print('Starting restic backup to B2')
   client = docker.DockerClient(base_url='unix://var/run/docker.sock')
-  client.images.pull('restic/restic:latest')
-  client.containers.run(image='restic/restic:latest',
+  client.containers.run(image='restic/restic:0.9.6',
                         auto_remove=True,
                         command='-r b2:lmserver-backups backup /host/backups',
                         detach=True,
@@ -88,8 +86,7 @@ def backupData():
 def backupPhotos():
   print('Starting rclone backup to StackStorage')
   client = docker.DockerClient(base_url='unix://var/run/docker.sock')
-  client.images.pull('rclone/rclone:latest')
-  client.containers.run(image='rclone/rclone:latest',
+  client.containers.run(image='rclone/rclone:1.53',
                         auto_remove=True,
                         command='sync /data stackstorage:photos --create-empty-src-dirs',
                         detach=True,
