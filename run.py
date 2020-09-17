@@ -5,7 +5,24 @@ import schedule
 import time
 import docker
 
-def database_backups():
+def resetPermissions():
+  print('Starting resetting filesystem permissions')
+  client = docker.DockerClient(base_url='unix://var/run/docker.sock')
+  client.containers.run(image='melvyndekort/resetperms:1.2',
+                        auto_remove=True,
+                        detach=True,
+                        environment=[
+                          'SETUID=8888',
+                          'SETGID=8888',
+                          'DIRS=/data01/kids;/data01/movies;/data01/music;/data01/software;/data01/torrents;/data01/tv;/data01/usenet;/data01/xxx;/safe01/photos'
+                        ],
+                        name='resetperms',
+                        volumes={'/safe01': {'bind': '/host/safe01', 'mode': 'rw'},
+                                 '/data01': {'bind': '/host/data01', 'mode': 'rw'}},
+                        working_dir='/host/lmserver')
+  print('Finished resetting filesystem permissions')
+
+def backupDatabases():
   print('Starting sonarr backup')
   client = docker.DockerClient(base_url='unix://var/run/docker.sock')
   client.containers.run(image='alpine:latest',
@@ -15,9 +32,9 @@ def database_backups():
                         entrypoint='wget',
                         name='sonarr-backup',
                         network='media_default',
-                        volumes={'/safe01/backups/lmserver/': {'bind': '/host/backups/lmserver', 'mode': 'rw'}},
+                        volumes={'/safe01/backups/lmserver': {'bind': '/host/lmserver', 'mode': 'rw'}},
                         user=8888,
-                        working_dir='/host/backups/lmserver')
+                        working_dir='/host/lmserver')
   print('Finished sonarr backup')
   print('Starting radarr backup')
   client.containers.run(image='alpine:latest',
@@ -27,12 +44,13 @@ def database_backups():
                         entrypoint='wget',
                         name='radarr-backup',
                         network='media_default',
-                        volumes={'/safe01/backups/lmserver/': {'bind': '/host/backups/lmserver', 'mode': 'rw'}},
+                        volumes={'/safe01/backups/lmserver': {'bind': '/host/lmserver', 'mode': 'rw'}},
                         user=8888,
-                        working_dir='/host/backups/lmserver')
+                        working_dir='/host/lmserver')
   print('Finished radarr backup')
+  client.close();
 
-def data_backup():
+def backupData():
   print('Starting restic backup to B2')
   client = docker.DockerClient(base_url='unix://var/run/docker.sock')
   client.containers.run(image='restic/restic:latest',
@@ -45,27 +63,27 @@ def data_backup():
                           'RESTIC_PASSWORD=' + os.environ['RESTIC_PASSWORD']
                         ],
                         name='restic',
-                        volumes={'/safe01/backups': {'bind': '/host/backups', 'mode': 'ro'}}
-                       )
+                        volumes={'/safe01/backups': {'bind': '/host/backups', 'mode': 'ro'}})
   print('Finished restic backup to B2')
+  client.close();
 
-def photos_backup():
+def backupPhotos():
   print('Starting rclone backup to StackStorage')
   client = docker.DockerClient(base_url='unix://var/run/docker.sock')
   client.containers.run(image='rclone/rclone:latest',
                         auto_remove=True,
-                        command='sync /data stackstorage:photos --create-empty-src-dirs --progress',
+                        command='sync /data stackstorage:photos --create-empty-src-dirs',
                         detach=True,
                         name='rclone',
                         volumes={'/safe01/photos': {'bind': '/data', 'mode': 'ro'},
-                                 'rclone': {'bind': '/config/rclone', 'mode': 'ro'}
-                                }
-                       )
+                                 'rclone': {'bind': '/config/rclone', 'mode': 'ro'}})
   print('Finished rclone backup to StackStorage')
+  client.close();
 
-schedule.every().day.at("02:00").do(database_backups)
-schedule.every().day.at("02:15").do(data_backup)
-schedule.every().day.at("03:00").do(photos_backup)
+schedule.every(1).hours.do(resetPermissions)
+schedule.every().day.at("02:00").do(backupDatabases)
+schedule.every().day.at("02:15").do(backupData)
+schedule.every().day.at("03:00").do(backupPhotos)
 
 while 1:
   schedule.run_pending()
