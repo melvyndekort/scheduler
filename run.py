@@ -14,17 +14,16 @@ def resetPermissions():
                         environment=[
                           'SETUID=8888',
                           'SETGID=8888',
-                          'DIRS=/data01/kids;/data01/movies;/data01/music;/data01/software;/data01/torrents;/data01/tv;/data01/usenet;/data01/xxx;/safe01/photos'
+                          'DIRS=/host/data01/kids;/host/data01/movies;/host/data01/music;/host/data01/software;/host/data01/torrents;/host/data01/tv;/host/data01/usenet;/host/data01/xxx;/host/safe01/photos'
                         ],
                         name='resetperms',
                         volumes={'/safe01': {'bind': '/host/safe01', 'mode': 'rw'},
-                                 '/data01': {'bind': '/host/data01', 'mode': 'rw'}},
-                        working_dir='/host/lmserver')
+                                 '/data01': {'bind': '/host/data01', 'mode': 'rw'}})
   print('Finished resetting filesystem permissions')
-  client.close();
+  client.close()
 
 def dyndns():
-  print('Starting resetting filesystem permissions')
+  print('Starting dyndns update')
   client = docker.DockerClient(base_url='unix://var/run/docker.sock')
   client.containers.run(image='melvyndekort/route53-dyndns:1.1',
                         auto_remove=True,
@@ -35,10 +34,9 @@ def dyndns():
                           'AWS_ACCESS_KEY_ID=' + os.environ['AWS_ACCESS_KEY_ID'],
                           'AWS_SECRET_ACCESS_KEY=' + os.environ['AWS_SECRET_ACCESS_KEY']
                         ],
-                        name='dyndns',
-                        working_dir='/host/lmserver')
-  print('Finished resetting filesystem permissions')
-  client.close();
+                        name='dyndns')
+  print('Finished dyndns update')
+  client.close()
 
 def backupDatabases():
   print('Starting sonarr backup')
@@ -66,7 +64,7 @@ def backupDatabases():
                         user=8888,
                         working_dir='/host/lmserver')
   print('Finished radarr backup')
-  client.close();
+  client.close()
 
 def backupData():
   print('Starting restic backup to B2')
@@ -83,7 +81,7 @@ def backupData():
                         name='restic',
                         volumes={'/safe01/backups': {'bind': '/host/backups', 'mode': 'ro'}})
   print('Finished restic backup to B2')
-  client.close();
+  client.close()
 
 def backupPhotos():
   print('Starting rclone backup to StackStorage')
@@ -96,7 +94,7 @@ def backupPhotos():
                         volumes={'/safe01/photos': {'bind': '/data', 'mode': 'ro'},
                                  'rclone': {'bind': '/config/rclone', 'mode': 'ro'}})
   print('Finished rclone backup to StackStorage')
-  client.close();
+  client.close()
 
 schedule.every(1).hours.do(resetPermissions)
 schedule.every(1).hours.do(dyndns)
