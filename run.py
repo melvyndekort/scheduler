@@ -21,6 +21,7 @@ def resetPermissions():
                                  '/data01': {'bind': '/host/data01', 'mode': 'rw'}},
                         working_dir='/host/lmserver')
   print('Finished resetting filesystem permissions')
+  client.close();
 
 def backupDatabases():
   print('Starting sonarr backup')
