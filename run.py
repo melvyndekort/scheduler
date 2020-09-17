@@ -23,6 +23,23 @@ def resetPermissions():
   print('Finished resetting filesystem permissions')
   client.close();
 
+def dyndns():
+  print('Starting resetting filesystem permissions')
+  client = docker.DockerClient(base_url='unix://var/run/docker.sock')
+  client.containers.run(image='melvyndekort/route53-dyndns:1.1',
+                        auto_remove=True,
+                        detach=True,
+                        environment=[
+                          'ZONEID=' + os.environ['ZONEID'],
+                          'FQDN=' + os.environ['FQDN'],
+                          'AWS_ACCESS_KEY_ID=' + os.environ['AWS_ACCESS_KEY_ID'],
+                          'AWS_SECRET_ACCESS_KEY=' + os.environ['AWS_SECRET_ACCESS_KEY']
+                        ],
+                        name='dyndns',
+                        working_dir='/host/lmserver')
+  print('Finished resetting filesystem permissions')
+  client.close();
+
 def backupDatabases():
   print('Starting sonarr backup')
   client = docker.DockerClient(base_url='unix://var/run/docker.sock')
@@ -82,6 +99,7 @@ def backupPhotos():
   client.close();
 
 schedule.every(1).hours.do(resetPermissions)
+schedule.every(1).hours.do(dyndns)
 schedule.every().day.at("02:00").do(backupDatabases)
 schedule.every().day.at("02:15").do(backupData)
 schedule.every().day.at("03:00").do(backupPhotos)
