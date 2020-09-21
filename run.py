@@ -79,7 +79,8 @@ def backupData():
                           'RESTIC_PASSWORD=' + os.environ['RESTIC_PASSWORD']
                         ],
                         name='restic',
-                        volumes={'/safe01/backups': {'bind': '/host/backups', 'mode': 'ro'}})
+                        volumes={'/safe01/backups': {'bind': '/host/backups', 'mode': 'ro'},
+                                 '/home/melvyn/Sync': {'bind': '/host/backups/Sync', 'mode': 'ro'}})
   print('Finished restic backup to B2')
   client.close()
 
