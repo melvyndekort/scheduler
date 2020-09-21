@@ -71,7 +71,7 @@ def backupData():
   client = docker.DockerClient(base_url='unix://var/run/docker.sock')
   client.containers.run(image='restic/restic:0.9.6',
                         auto_remove=True,
-                        command='-r b2:lmserver-backups backup /host/backups',
+                        command='--no-cache -r b2:lmserver-backups backup -H lmserver /host/backups',
                         detach=True,
                         environment=[
                           'B2_ACCOUNT_ID=' + os.environ['B2_ACCOUNT_ID'],
