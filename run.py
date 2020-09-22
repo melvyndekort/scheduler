@@ -71,7 +71,7 @@ def backupDataOne():
   client = docker.DockerClient(base_url='unix://var/run/docker.sock')
   client.containers.run(image='restic/restic:0.9.6',
                         auto_remove=True,
-                        command='--no-cache -r s3:https:s3.eu-central-1.wasabisys.com/mdekort.backup/lmserver backup -H lmserver /host/backups',
+                        command='--no-cache -r s3:https://s3.wasabisys.com/mdekort-backup/lmserver backup -H lmserver /host/backups',
                         detach=True,
                         environment=[
                           'AWS_ACCESS_KEY_ID=' + os.environ['WASABI_ACCESS_KEY_ID'],
@@ -88,7 +88,7 @@ def backupDataTwo():
   client = docker.DockerClient(base_url='unix://var/run/docker.sock')
   client.containers.run(image='restic/restic:0.9.6',
                         auto_remove=True,
-                        command='--no-cache -r s3:https:s3.eu-central-1.wasabisys.com/mdekort.backup/syncthing backup -H lmserver /host/syncthing',
+                        command='--no-cache -r s3:https://s3.wasabisys.com/mdekort-backup/syncthing backup -H lmserver /host/syncthing',
                         detach=True,
                         environment=[
                           'AWS_ACCESS_KEY_ID=' + os.environ['WASABI_ACCESS_KEY_ID'],
