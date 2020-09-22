@@ -67,37 +67,37 @@ def backupDatabases():
   client.close()
 
 def backupDataOne():
-  print('Starting restic backup to B2: lmserver')
+  print('Starting restic backup to Wasabi: lmserver')
   client = docker.DockerClient(base_url='unix://var/run/docker.sock')
   client.containers.run(image='restic/restic:0.9.6',
                         auto_remove=True,
-                        command='--no-cache -r b2:lmbackup:lmserver backup -H lmserver /host/backups',
+                        command='--no-cache -r s3:https:s3.eu-central-1.wasabisys.com/mdekort.backup/lmserver backup -H lmserver /host/backups',
                         detach=True,
                         environment=[
-                          'B2_ACCOUNT_ID=' + os.environ['B2_ACCOUNT_ID'],
-                          'B2_ACCOUNT_KEY=' + os.environ['B2_ACCOUNT_KEY'],
+                          'AWS_ACCESS_KEY_ID=' + os.environ['WASABI_ACCESS_KEY_ID'],
+                          'AWS_SECRET_ACCESS_KEY=' + os.environ['WASABI_SECRET_ACCESS_KEY'],
                           'RESTIC_PASSWORD=' + os.environ['RESTIC_PASSWORD']
                         ],
                         name='restic',
                         volumes={'/safe01/backups': {'bind': '/host/backups', 'mode': 'ro'}})
-  print('Finished restic backup to B2: lmserver')
+  print('Finished restic backup to Wasabi: lmserver')
   client.close()
 
 def backupDataTwo():
-  print('Starting restic backup to B2: syncthing')
+  print('Starting restic backup to Wasabi: syncthing')
   client = docker.DockerClient(base_url='unix://var/run/docker.sock')
   client.containers.run(image='restic/restic:0.9.6',
                         auto_remove=True,
-                        command='--no-cache -r b2:lmbackup:syncthing backup -H lmserver /host/syncthing',
+                        command='--no-cache -r s3:https:s3.eu-central-1.wasabisys.com/mdekort.backup/syncthing backup -H lmserver /host/syncthing',
                         detach=True,
                         environment=[
-                          'B2_ACCOUNT_ID=' + os.environ['B2_ACCOUNT_ID'],
-                          'B2_ACCOUNT_KEY=' + os.environ['B2_ACCOUNT_KEY'],
+                          'AWS_ACCESS_KEY_ID=' + os.environ['WASABI_ACCESS_KEY_ID'],
+                          'AWS_SECRET_ACCESS_KEY=' + os.environ['WASABI_SECRET_ACCESS_KEY'],
                           'RESTIC_PASSWORD=' + os.environ['RESTIC_PASSWORD']
                         ],
                         name='restic',
                         volumes={'/home/melvyn/Sync': {'bind': '/host/syncthing', 'mode': 'ro'}})
-  print('Finished restic backup to B2: syncthing')
+  print('Finished restic backup to Wasabi: syncthing')
   client.close()
 
 def backupPhotos():
