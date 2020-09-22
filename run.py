@@ -66,12 +66,12 @@ def backupDatabases():
   print('Finished radarr backup')
   client.close()
 
-def backupData():
-  print('Starting restic backup to B2')
+def backupDataOne():
+  print('Starting restic backup to B2: lmserver')
   client = docker.DockerClient(base_url='unix://var/run/docker.sock')
   client.containers.run(image='restic/restic:0.9.6',
                         auto_remove=True,
-                        command='--no-cache -r b2:lmserver-backups backup -H lmserver /host/backups',
+                        command='--no-cache -r b2:lmbackup:lmserver backup -H lmserver /host/backups',
                         detach=True,
                         environment=[
                           'B2_ACCOUNT_ID=' + os.environ['B2_ACCOUNT_ID'],
@@ -79,9 +79,25 @@ def backupData():
                           'RESTIC_PASSWORD=' + os.environ['RESTIC_PASSWORD']
                         ],
                         name='restic',
-                        volumes={'/safe01/backups': {'bind': '/host/backups', 'mode': 'ro'},
-                                 '/home/melvyn/Sync': {'bind': '/host/backups/Sync', 'mode': 'ro'}})
-  print('Finished restic backup to B2')
+                        volumes={'/safe01/backups': {'bind': '/host/backups', 'mode': 'ro'}})
+  print('Finished restic backup to B2: lmserver')
+  client.close()
+
+def backupDataTwo():
+  print('Starting restic backup to B2: syncthing')
+  client = docker.DockerClient(base_url='unix://var/run/docker.sock')
+  client.containers.run(image='restic/restic:0.9.6',
+                        auto_remove=True,
+                        command='--no-cache -r b2:lmbackup:syncthing backup -H lmserver /host/syncthing',
+                        detach=True,
+                        environment=[
+                          'B2_ACCOUNT_ID=' + os.environ['B2_ACCOUNT_ID'],
+                          'B2_ACCOUNT_KEY=' + os.environ['B2_ACCOUNT_KEY'],
+                          'RESTIC_PASSWORD=' + os.environ['RESTIC_PASSWORD']
+                        ],
+                        name='restic',
+                        volumes={'/home/melvyn/Sync': {'bind': '/host/syncthing', 'mode': 'ro'}})
+  print('Finished restic backup to B2: syncthing')
   client.close()
 
 def backupPhotos():
@@ -100,8 +116,9 @@ def backupPhotos():
 schedule.every(1).hours.do(resetPermissions)
 schedule.every(1).hours.do(dyndns)
 schedule.every().day.at("02:00").do(backupDatabases)
-schedule.every().day.at("02:15").do(backupData)
-schedule.every().day.at("03:00").do(backupPhotos)
+schedule.every().day.at("02:15").do(backupDataOne)
+schedule.every().day.at("02:45").do(backupDataTwo)
+schedule.every().day.at("03:15").do(backupPhotos)
 
 while 1:
   schedule.run_pending()
