@@ -121,7 +121,7 @@ def backups():
                             'AWS_SECRET_ACCESS_KEY=' + os.environ['WASABI_SECRET_ACCESS_KEY'],
                             'RESTIC_PASSWORD=' + os.environ['RESTIC_PASSWORD']
                           ],
-                          name='restic'
+                          name='restic')
     print('Finished cleaning of restic backups from Wasabi: lmserver')
 
     print('Starting cleaning of restic backups from Wasabi: syncthing')
@@ -134,7 +134,7 @@ def backups():
                             'AWS_SECRET_ACCESS_KEY=' + os.environ['WASABI_SECRET_ACCESS_KEY'],
                             'RESTIC_PASSWORD=' + os.environ['RESTIC_PASSWORD']
                           ],
-                          name='restic'
+                          name='restic')
     print('Finished cleaning of restic backups from Wasabi: syncthing')
 
     print('Starting cleaning of restic backups from Wasabi: libvirt')
@@ -147,7 +147,7 @@ def backups():
                             'AWS_SECRET_ACCESS_KEY=' + os.environ['WASABI_SECRET_ACCESS_KEY'],
                             'RESTIC_PASSWORD=' + os.environ['RESTIC_PASSWORD']
                           ],
-                          name='restic'
+                          name='restic')
     print('Finished cleaning of restic backups from Wasabi: libvirt')
 
     print('Starting rclone backup to StackStorage')
