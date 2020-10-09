@@ -12,7 +12,7 @@ from pprint import pprint
 def with_logging(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
-        print('Running job "%s"' % func.__name__)
+        print('Job "%s" started' % func.__name__)
         result = func(*args, **kwargs)
         print('Job "%s" completed' % func.__name__)
         return result
@@ -233,7 +233,7 @@ def run_threaded(job_func):
 
 
 def main():
-    schedule.every(1).hours.do(run_threaded, job_resetPermissions)
+    #schedule.every(1).hours.do(run_threaded, job_resetPermissions)
     schedule.every(2).hours.do(run_threaded, job_dyndns)
     schedule.every().day.at("02:00").do(run_threaded, job_backups)
 
