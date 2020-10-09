@@ -160,7 +160,7 @@ def job_resetPermissions():
                           environment=[
                             'SETUID=8888',
                             'SETGID=8888',
-                            'DIRS=/host/data01/kids;/host/data01/movies;/host/data01/music;/host/data01/software;/host/data01/torrents;/host/data01/tv;/host/data01/usenet;/host/data01/xxx;/host/safe01/photos'
+                            'DIRS=' + os.environ['PERMDIRS']
                           ],
                           name='resetperms',
                           volumes={'/safe01': {'bind': '/host/safe01', 'mode': 'rw'},
