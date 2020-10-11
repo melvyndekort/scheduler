@@ -202,27 +202,27 @@ def waitUntilContainerStops(client, name):
 def job_backups():
     client = docker.DockerClient(base_url='unix://var/run/docker.sock')
 
-    backupSonarr()
+    backupSonarr(client)
     waitUntilContainerStops(client, 'sonarr-backup')
-    backupRadarr()
+    backupRadarr(client)
     waitUntilContainerStops(client, 'radarr-backup')
 
-    backupLMServer()
+    backupLMServer(client)
     waitUntilContainerStops(client, 'restic')
-    cleanupLMServer()
-    waitUntilContainerStops(client, 'restic')
-
-    backupSyncthing()
-    waitUntilContainerStops(client, 'restic')
-    cleanupSyncthing()
+    cleanupLMServer(client)
     waitUntilContainerStops(client, 'restic')
 
-    backupLibvirt()
+    backupSyncthing(client)
     waitUntilContainerStops(client, 'restic')
-    cleanupLibvirt()
+    cleanupSyncthing(client)
     waitUntilContainerStops(client, 'restic')
 
-    backupPhotos()
+    backupLibvirt(client)
+    waitUntilContainerStops(client, 'restic')
+    cleanupLibvirt(client)
+    waitUntilContainerStops(client, 'restic')
+
+    backupPhotos(client)
 
     client.close()
 
