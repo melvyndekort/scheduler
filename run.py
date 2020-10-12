@@ -174,11 +174,11 @@ def job_resetPermissions():
 @with_logging
 def job_dyndns():
     client = docker.DockerClient(base_url='unix://var/run/docker.sock')
-    client.containers.run(image='melvyndekort/route53-dyndns:1.1',
+    client.containers.run(image='melvyndekort/route53-dyndns:1.2',
                           auto_remove=True,
                           detach=False,
                           environment=[
-                            'ZONEID=' + os.environ['ZONEID'],
+                            'AWS_HOSTED_ZONE_ID=' + os.environ['AWS_HOSTED_ZONE_ID'],
                             'FQDN=' + os.environ['FQDN'],
                             'AWS_ACCESS_KEY_ID=' + os.environ['AWS_ACCESS_KEY_ID'],
                             'AWS_SECRET_ACCESS_KEY=' + os.environ['AWS_SECRET_ACCESS_KEY']
