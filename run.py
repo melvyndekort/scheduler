@@ -235,6 +235,7 @@ def get_jobs():
     output = '''
 <html>
 <head>
+<title>Scheduler</title>
 <script>
 function startjob(tag) {
     var req = new XMLHttpRequest();
@@ -277,8 +278,7 @@ def run_threaded(job_func):
 if __name__ == "__main__":
     run_threaded(run_flask)
 
-    #schedule.every(1).hours.do(run_threaded, job_resetPermissions)
-    schedule.every(2).hours.tag('dyndns').do(run_threaded, job_dyndns)
+    schedule.every(1).hours.tag('dyndns').do(run_threaded, job_dyndns)
     schedule.every().day.at("02:00").tag('backups').do(run_threaded, job_backups)
 
     while 1:
