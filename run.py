@@ -191,7 +191,7 @@ def waitUntilContainerStops(client, name):
             raise Exception(f"Container {name} was running longer than expected")
 
         try:
-            client.get(name)
+            client.containers.get(name)
             counter += 1
             time.sleep(1)
         except docker.errors.NotFound:
