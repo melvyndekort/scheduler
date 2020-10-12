@@ -238,7 +238,7 @@ def get_jobs():
 <script>
 function startjob(tag) {
     var req = new XMLHttpRequest();
-    req.open('POST', 'http://localhost:5000/' + tag);
+    req.open('POST', window.location.href + '/' + tag);
     req.send();
 }
 </script>
