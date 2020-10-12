@@ -6,7 +6,10 @@ import threading
 import time
 import functools
 import docker
-from pprint import pprint
+from flask import Flask, abort
+
+
+app = Flask(__name__)
 
 
 def with_logging(func):
@@ -227,23 +230,57 @@ def job_backups():
     client.close()
 
 
+@app.route('/', methods=['GET'])
+def get_jobs():
+    output = '''
+<html>
+<head>
+<script>
+function startjob(tag) {
+    var req = new XMLHttpRequest();
+    req.open('POST', 'http://localhost:5000/' + tag);
+    req.send();
+}
+</script>
+</head>
+<body>
+'''
+    for job in schedule.jobs:
+        tags = ''
+        for tag in job.tags:
+            tags += tag
+        time = job.next_run.strftime("%Y-%m-%d %H:%M:%S")
+        output += f'{tags} | {time} | <button onclick="startjob(\'{tags}\')">start</button><br/>\n'
+    return output + '</body></html>'
+
+
+@app.route('/<tag>', methods=['POST'])
+def trigger_job(tag):
+    print(f'JOB TRIGGERED: {tag}')
+    for job in schedule.jobs:
+        for mytag in job.tags:
+            if mytag == tag:
+                job.run()
+                return ''
+    abort(404)
+
+
+def run_flask():
+    app.run('0.0.0.0', use_reloader=False)
+
+
 def run_threaded(job_func):
     job_thread = threading.Thread(target=job_func)
     job_thread.start()
 
 
-def main():
-    #schedule.every(1).hours.do(run_threaded, job_resetPermissions)
-    schedule.every(2).hours.do(run_threaded, job_dyndns)
-    schedule.every().day.at("02:00").do(run_threaded, job_backups)
+if __name__ == "__main__":
+    run_threaded(run_flask)
 
-    print('Loaded jobs:')
-    pprint(schedule.jobs)
-    
+    #schedule.every(1).hours.do(run_threaded, job_resetPermissions)
+    schedule.every(2).hours.tag('dyndns').do(run_threaded, job_dyndns)
+    schedule.every().day.at("02:00").tag('backups').do(run_threaded, job_backups)
+
     while 1:
         schedule.run_pending()
         time.sleep(1)
-
-
-if __name__ == "__main__": 
-    main()
