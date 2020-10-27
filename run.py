@@ -54,11 +54,11 @@ def backupRadarr(client):
 def backupLMServer(client):
     client.containers.run(image='restic/restic:0.9.6',
                           auto_remove=True,
-                          command='--no-cache -r s3:https://s3.wasabisys.com/mdekort-backup/lmserver backup -H lmserver /host/backups',
+                          command='--no-cache -r b2:mdekort-backup-lmserver backup -H lmserver /host/backups',
                           detach=False,
                           environment=[
-                            'AWS_ACCESS_KEY_ID=' + os.environ['WASABI_ACCESS_KEY_ID'],
-                            'AWS_SECRET_ACCESS_KEY=' + os.environ['WASABI_SECRET_ACCESS_KEY'],
+                            'B2_ACCOUNT_ID=' + os.environ['B2_ACCOUNT_ID'],
+                            'B2_ACCOUNT_KEY=' + os.environ['B2_ACCOUNT_KEY'],
                             'RESTIC_PASSWORD=' + os.environ['RESTIC_PASSWORD']
                           ],
                           name='restic',
@@ -69,11 +69,11 @@ def backupLMServer(client):
 def cleanupLMServer(client):
     client.containers.run(image='restic/restic:0.9.6',
                           auto_remove=True,
-                          command='--no-cache -r s3:https://s3.wasabisys.com/mdekort-backup/lmserver forget --prune --keep-last 21',
+                          command='--no-cache -r b2:mdekort-backup-lmserver forget --prune --keep-last 21',
                           detach=False,
                           environment=[
-                            'AWS_ACCESS_KEY_ID=' + os.environ['WASABI_ACCESS_KEY_ID'],
-                            'AWS_SECRET_ACCESS_KEY=' + os.environ['WASABI_SECRET_ACCESS_KEY'],
+                            'B2_ACCOUNT_ID=' + os.environ['B2_ACCOUNT_ID'],
+                            'B2_ACCOUNT_KEY=' + os.environ['B2_ACCOUNT_KEY'],
                             'RESTIC_PASSWORD=' + os.environ['RESTIC_PASSWORD']
                           ],
                           name='restic')
@@ -83,11 +83,11 @@ def cleanupLMServer(client):
 def backupSyncthing(client):
     client.containers.run(image='restic/restic:0.9.6',
                           auto_remove=True,
-                          command='--no-cache -r s3:https://s3.wasabisys.com/mdekort-backup/syncthing backup -H lmserver /host/syncthing',
+                          command='--no-cache -r b2:mdekort-backup-syncthing backup -H lmserver /host/syncthing',
                           detach=False,
                           environment=[
-                            'AWS_ACCESS_KEY_ID=' + os.environ['WASABI_ACCESS_KEY_ID'],
-                            'AWS_SECRET_ACCESS_KEY=' + os.environ['WASABI_SECRET_ACCESS_KEY'],
+                            'B2_ACCOUNT_ID=' + os.environ['B2_ACCOUNT_ID'],
+                            'B2_ACCOUNT_KEY=' + os.environ['B2_ACCOUNT_KEY'],
                             'RESTIC_PASSWORD=' + os.environ['RESTIC_PASSWORD']
                           ],
                           name='restic',
@@ -98,11 +98,11 @@ def backupSyncthing(client):
 def cleanupSyncthing(client):
     client.containers.run(image='restic/restic:0.9.6',
                           auto_remove=True,
-                          command='--no-cache -r s3:https://s3.wasabisys.com/mdekort-backup/syncthing forget --prune --keep-last 21',
+                          command='--no-cache -r b2:mdekort-backup-syncthing forget --prune --keep-last 21',
                           detach=False,
                           environment=[
-                            'AWS_ACCESS_KEY_ID=' + os.environ['WASABI_ACCESS_KEY_ID'],
-                            'AWS_SECRET_ACCESS_KEY=' + os.environ['WASABI_SECRET_ACCESS_KEY'],
+                            'B2_ACCOUNT_ID=' + os.environ['B2_ACCOUNT_ID'],
+                            'B2_ACCOUNT_KEY=' + os.environ['B2_ACCOUNT_KEY'],
                             'RESTIC_PASSWORD=' + os.environ['RESTIC_PASSWORD']
                           ],
                           name='restic')
@@ -112,11 +112,11 @@ def cleanupSyncthing(client):
 def backupLibvirt(client):
     client.containers.run(image='restic/restic:0.9.6',
                           auto_remove=True,
-                          command='--no-cache -r s3:https://s3.wasabisys.com/mdekort-backup/libvirt backup -H lmserver /host/libvirt',
+                          command='--no-cache -r b2:mdekort-backup-libvirt backup -H lmserver /host/libvirt',
                           detach=False,
                           environment=[
-                            'AWS_ACCESS_KEY_ID=' + os.environ['WASABI_ACCESS_KEY_ID'],
-                            'AWS_SECRET_ACCESS_KEY=' + os.environ['WASABI_SECRET_ACCESS_KEY'],
+                            'B2_ACCOUNT_ID=' + os.environ['B2_ACCOUNT_ID'],
+                            'B2_ACCOUNT_KEY=' + os.environ['B2_ACCOUNT_KEY'],
                             'RESTIC_PASSWORD=' + os.environ['RESTIC_PASSWORD']
                           ],
                           name='restic',
@@ -127,11 +127,11 @@ def backupLibvirt(client):
 def cleanupLibvirt(client):
     client.containers.run(image='restic/restic:0.9.6',
                           auto_remove=True,
-                          command='--no-cache -r s3:https://s3.wasabisys.com/mdekort-backup/libvirt forget --prune --keep-last 21',
+                          command='--no-cache -r b2:mdekort-backup-libvirt forget --prune --keep-last 21',
                           detach=False,
                           environment=[
-                            'AWS_ACCESS_KEY_ID=' + os.environ['WASABI_ACCESS_KEY_ID'],
-                            'AWS_SECRET_ACCESS_KEY=' + os.environ['WASABI_SECRET_ACCESS_KEY'],
+                            'B2_ACCOUNT_ID=' + os.environ['B2_ACCOUNT_ID'],
+                            'B2_ACCOUNT_KEY=' + os.environ['B2_ACCOUNT_KEY'],
                             'RESTIC_PASSWORD=' + os.environ['RESTIC_PASSWORD']
                           ],
                           name='restic')
