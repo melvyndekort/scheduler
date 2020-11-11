@@ -139,18 +139,16 @@ def cleanupLibvirt(client):
 
 @with_logging
 def backupPhotos(client):
-    client.containers.run(image='rclone/rclone:1.53',
+    client.containers.run(image='amazon/aws-cli:2.1.0',
                           auto_remove=True,
-                          command='/bin/sh -c "rclone config create stackstorage webdav; rclone sync /data stackstorage:photos --create-empty-src-dirs"',
+                          command='s3 sync /data/ s3://' + os.environ['AWS_BACKUP_BUCKET'] + '/photos/ --only-show-errors',
                           detach=False,
                           entrypoint='',
                           environment=[
-                            'RCLONE_WEBDAV_VENDOR=owncloud',
-                            'RCLONE_WEBDAV_URL=https://lordmatanza.stackstorage.com/remote.php/webdav/',
-                            'RCLONE_WEBDAV_USER=' + os.environ['RCLONE_WEBDAV_USER'],
-                            'RCLONE_WEBDAV_PASS=' + os.environ['RCLONE_WEBDAV_PASS']
+                            'AWS_ACCESS_KEY_ID=' + os.environ['LMBACKUP_ACCESS_KEY_ID'],
+                            'AWS_SCRET_ACCESS_KEY=' + os.environ['LMBACKUP_SECRET_ACCESS_KEY']
                           ],
-                          name='rclone',
+                          name='awscli',
                           volumes={'/safe01/photos': {'bind': '/data', 'mode': 'ro'}})
 
 
@@ -178,10 +176,10 @@ def job_dyndns():
                           auto_remove=True,
                           detach=False,
                           environment=[
-                            'AWS_HOSTED_ZONE_ID=' + os.environ['AWS_HOSTED_ZONE_ID'],
+                            'AWS_HOSTED_ZONE_ID=' + os.environ['DYNDNS_HOSTED_ZONE_ID'],
                             'FQDN=' + os.environ['FQDN'],
-                            'AWS_ACCESS_KEY_ID=' + os.environ['AWS_ACCESS_KEY_ID'],
-                            'AWS_SECRET_ACCESS_KEY=' + os.environ['AWS_SECRET_ACCESS_KEY']
+                            'AWS_ACCESS_KEY_ID=' + os.environ['DYNDNS_ACCESS_KEY_ID'],
+                            'AWS_SECRET_ACCESS_KEY=' + os.environ['DYNDNS_SECRET_ACCESS_KEY']
                           ],
                           name='dyndns')
     client.close()
