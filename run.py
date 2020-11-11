@@ -145,7 +145,7 @@ def backupPhotos(client):
                           detach=False,
                           environment=[
                             'AWS_ACCESS_KEY_ID=' + os.environ['LMBACKUP_ACCESS_KEY_ID'],
-                            'AWS_SCRET_ACCESS_KEY=' + os.environ['LMBACKUP_SECRET_ACCESS_KEY']
+                            'AWS_SECRET_ACCESS_KEY=' + os.environ['LMBACKUP_SECRET_ACCESS_KEY']
                           ],
                           name='awscli',
                           volumes={'/safe01/photos': {'bind': '/data', 'mode': 'ro'}})
