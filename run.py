@@ -143,7 +143,6 @@ def backupPhotos(client):
                           auto_remove=True,
                           command='s3 sync /data/ s3://' + os.environ['AWS_BACKUP_BUCKET'] + '/photos/ --only-show-errors',
                           detach=False,
-                          entrypoint='',
                           environment=[
                             'AWS_ACCESS_KEY_ID=' + os.environ['LMBACKUP_ACCESS_KEY_ID'],
                             'AWS_SCRET_ACCESS_KEY=' + os.environ['LMBACKUP_SECRET_ACCESS_KEY']
