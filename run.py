@@ -24,7 +24,7 @@ def with_logging(func):
 
 @with_logging
 def backupSonarr(client):
-    client.containers.run(image='alpine:3.12',
+    client.containers.run(image='alpine:latest',
                           auto_remove=True,
                           command='-O sonarr.zip http://sonarr:8989/api/system/backup?apikey=' + os.environ['SONARR_TOKEN'],
                           detach=False,
@@ -38,7 +38,7 @@ def backupSonarr(client):
 
 @with_logging
 def backupRadarr(client):
-    client.containers.run(image='alpine:3.12',
+    client.containers.run(image='alpine:latest',
                           auto_remove=True,
                           command='-O radarr.zip http://radarr:7878/api/system/backup?apikey=' + os.environ['RADARR_TOKEN'],
                           detach=False,
@@ -52,7 +52,7 @@ def backupRadarr(client):
 
 @with_logging
 def backupLMServer(client):
-    client.containers.run(image='restic/restic:0.9.6',
+    client.containers.run(image='restic/restic:latest',
                           auto_remove=True,
                           command='--no-cache -r b2:mdekort-backup-lmserver backup -H lmserver /host/backups',
                           detach=False,
@@ -67,7 +67,7 @@ def backupLMServer(client):
 
 @with_logging
 def cleanupLMServer(client):
-    client.containers.run(image='restic/restic:0.9.6',
+    client.containers.run(image='restic/restic:latest',
                           auto_remove=True,
                           command='--no-cache -r b2:mdekort-backup-lmserver forget --prune --keep-last 21',
                           detach=False,
@@ -81,7 +81,7 @@ def cleanupLMServer(client):
 
 @with_logging
 def backupSyncthing(client):
-    client.containers.run(image='restic/restic:0.9.6',
+    client.containers.run(image='restic/restic:latest',
                           auto_remove=True,
                           command='--no-cache -r b2:mdekort-backup-syncthing backup -H lmserver /host/syncthing',
                           detach=False,
@@ -96,7 +96,7 @@ def backupSyncthing(client):
 
 @with_logging
 def cleanupSyncthing(client):
-    client.containers.run(image='restic/restic:0.9.6',
+    client.containers.run(image='restic/restic:latest',
                           auto_remove=True,
                           command='--no-cache -r b2:mdekort-backup-syncthing forget --prune --keep-last 21',
                           detach=False,
@@ -110,7 +110,7 @@ def cleanupSyncthing(client):
 
 @with_logging
 def backupLibvirt(client):
-    client.containers.run(image='restic/restic:0.9.6',
+    client.containers.run(image='restic/restic:latest',
                           auto_remove=True,
                           command='--no-cache -r b2:mdekort-backup-libvirt backup -H lmserver /host/libvirt',
                           detach=False,
@@ -125,7 +125,7 @@ def backupLibvirt(client):
 
 @with_logging
 def cleanupLibvirt(client):
-    client.containers.run(image='restic/restic:0.9.6',
+    client.containers.run(image='restic/restic:latest',
                           auto_remove=True,
                           command='--no-cache -r b2:mdekort-backup-libvirt forget --prune --keep-last 21',
                           detach=False,
@@ -152,26 +152,9 @@ def backupPhotos(client):
 
 
 @with_logging
-def job_resetPermissions():
-    client = docker.DockerClient(base_url='unix://var/run/docker.sock')
-    client.containers.run(image='melvyndekort/resetperms:1.2',
-                          auto_remove=True,
-                          detach=False,
-                          environment=[
-                            'SETUID=8888',
-                            'SETGID=8888',
-                            'DIRS=' + os.environ['PERMDIRS']
-                          ],
-                          name='resetperms',
-                          volumes={'/safe01': {'bind': '/host/safe01', 'mode': 'rw'},
-                                   '/data01': {'bind': '/host/data01', 'mode': 'rw'}})
-    client.close()
-
-
-@with_logging
 def job_dyndns():
     client = docker.DockerClient(base_url='unix://var/run/docker.sock')
-    client.containers.run(image='melvyndekort/route53-dyndns:1.2',
+    client.containers.run(image='melvyndekort/route53-dyndns:latest',
                           auto_remove=True,
                           detach=False,
                           environment=[
