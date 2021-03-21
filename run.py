@@ -139,7 +139,7 @@ def cleanupLibvirt(client):
 
 @with_logging
 def backupPhotos(client):
-    client.containers.run(image='amazon/aws-cli:2.1.0',
+    client.containers.run(image='amazon/aws-cli:latest',
                           auto_remove=True,
                           command='s3 sync /data/ s3://' + os.environ['AWS_BACKUP_BUCKET'] + '/photos/ --delete --only-show-errors',
                           detach=False,
