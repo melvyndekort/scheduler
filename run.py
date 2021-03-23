@@ -60,7 +60,7 @@ def backupRadarr(client):
 def backupNZBHydra2(client):
     client.containers.run(image='alpine:latest',
                           auto_remove=True,
-                          command='-O nzbhydra2.zip http://nzbhydra2:5076/internalapi/backup/backup',
+                          command='-O nzbhydra2.zip http://nzbhydra2:5076/nzbhydra2/internalapi/backup/backup',
                           detach=False,
                           entrypoint='wget',
                           name='nzbhydra2-backup',
