@@ -31,9 +31,12 @@ def backupSonarr(client):
                           entrypoint='wget',
                           name='sonarr-backup',
                           network='media_default',
-                          volumes={'/safe01/backups/lmserver': {'bind': '/host/lmserver', 'mode': 'rw'}},
+                          volumes={
+                              '/safe01/backups/lmserver': {'bind': '/backups', 'mode': 'rw'}
+                              },
                           user=8888,
-                          working_dir='/host/lmserver')
+                          working_dir='/backups'
+                          )
 
 
 @with_logging
@@ -45,9 +48,79 @@ def backupRadarr(client):
                           entrypoint='wget',
                           name='radarr-backup',
                           network='media_default',
-                          volumes={'/safe01/backups/lmserver': {'bind': '/host/lmserver', 'mode': 'rw'}},
+                          volumes={
+                              '/safe01/backups/lmserver': {'bind': '/backups', 'mode': 'rw'}
+                              },
                           user=8888,
-                          working_dir='/host/lmserver')
+                          working_dir='/backups'
+                          )
+
+
+@with_logging
+def backupNZBHydra2(client):
+    client.containers.run(image='alpine:latest',
+                          auto_remove=True,
+                          command='-O nzbhydra2.zip http://nzbhydra2:5076/internalapi/backup/backup',
+                          detach=False,
+                          entrypoint='wget',
+                          name='nzbhydra2-backup',
+                          network='media_default',
+                          volumes={
+                              '/safe01/backups/lmserver': {'bind': '/backups', 'mode': 'rw'}
+                              },
+                          user=8888,
+                          working_dir='/backups'
+                          )
+
+
+@with_logging
+def backupEmby(client):
+    client.containers.run(image='alpine:latest',
+                          auto_remove=True,
+                          command='c -zf /backups/emby.tar.gz config plugins data/collections data/playlists data/displaypreferences.db data/users.db data/library.db metadata',
+                          detach=False,
+                          entrypoint='tar',
+                          name='emby-backup',
+                          volumes={
+                              '/safe01/backups/lmserver': {'bind': '/backups', 'mode': 'rw'},
+                              'media_emby': {'bind': '/emby', 'mode': 'ro'}
+                              },
+                          user=8888,
+                          working_dir='/emby'
+                          )
+
+
+@with_logging
+def backupFlexget(client):
+    client.containers.run(image='alpine:latest',
+                          auto_remove=True,
+                          command='c -zf /backups/flexget.tar.gz config.yml variables.yml db-config.sqlite db-config-jobs.sqlite',
+                          detach=False,
+                          entrypoint='tar',
+                          name='flexget-backup',
+                          volumes={
+                              '/safe01/backups/lmserver': {'bind': '/backups', 'mode': 'rw'},
+                              'media_flexget': {'bind': '/flexget', 'mode': 'ro'}
+                              },
+                          user=8888,
+                          working_dir='/flexget'
+                          )
+
+
+@with_logging
+def backupNZBGet(client):
+    client.containers.run(image='alpine:latest',
+                          auto_remove=True,
+                          command='-c /nzbget/nzbget.conf > /backups/nzbget.conf.gz',
+                          detach=False,
+                          entrypoint='gzip',
+                          name='nzbget-backup',
+                          volumes={
+                              '/safe01/backups/lmserver': {'bind': '/backups', 'mode': 'rw'},
+                              'media_nzbget': {'bind': '/nzbget', 'mode': 'ro'}
+                              },
+                          user=8888
+                          )
 
 
 @with_logging
@@ -62,7 +135,10 @@ def backupLMServer(client):
                             'RESTIC_PASSWORD=' + os.environ['RESTIC_PASSWORD']
                           ],
                           name='restic',
-                          volumes={'/safe01/backups': {'bind': '/host/backups', 'mode': 'ro'}})
+                          volumes={
+                              '/safe01/backups': {'bind': '/host/backups', 'mode': 'ro'}
+                              }
+                          )
 
 
 @with_logging
@@ -76,7 +152,8 @@ def cleanupLMServer(client):
                             'B2_ACCOUNT_KEY=' + os.environ['B2_ACCOUNT_KEY'],
                             'RESTIC_PASSWORD=' + os.environ['RESTIC_PASSWORD']
                           ],
-                          name='restic')
+                          name='restic'
+                          )
 
 
 @with_logging
@@ -91,7 +168,10 @@ def backupSyncthing(client):
                             'RESTIC_PASSWORD=' + os.environ['RESTIC_PASSWORD']
                           ],
                           name='restic',
-                          volumes={'/home/melvyn/Sync': {'bind': '/host/syncthing', 'mode': 'ro'}})
+                          volumes={
+                              '/home/melvyn/Sync': {'bind': '/host/syncthing', 'mode': 'ro'}
+                              }
+                          )
 
 
 @with_logging
@@ -105,7 +185,8 @@ def cleanupSyncthing(client):
                             'B2_ACCOUNT_KEY=' + os.environ['B2_ACCOUNT_KEY'],
                             'RESTIC_PASSWORD=' + os.environ['RESTIC_PASSWORD']
                           ],
-                          name='restic')
+                          name='restic'
+                          )
 
 
 @with_logging
@@ -120,7 +201,10 @@ def backupLibvirt(client):
                             'RESTIC_PASSWORD=' + os.environ['RESTIC_PASSWORD']
                           ],
                           name='restic',
-                          volumes={'/safe01/libvirt': {'bind': '/host/libvirt', 'mode': 'ro'}})
+                          volumes={
+                              '/safe01/libvirt': {'bind': '/host/libvirt', 'mode': 'ro'}
+                              }
+                          )
 
 
 @with_logging
@@ -134,7 +218,8 @@ def cleanupLibvirt(client):
                             'B2_ACCOUNT_KEY=' + os.environ['B2_ACCOUNT_KEY'],
                             'RESTIC_PASSWORD=' + os.environ['RESTIC_PASSWORD']
                           ],
-                          name='restic')
+                          name='restic'
+                          )
 
 
 @with_logging
@@ -148,7 +233,10 @@ def backupPhotos(client):
                             'AWS_SECRET_ACCESS_KEY=' + os.environ['LMBACKUP_SECRET_ACCESS_KEY']
                           ],
                           name='awscli',
-                          volumes={'/safe01/photos': {'bind': '/data', 'mode': 'ro'}})
+                          volumes={
+                              '/safe01/photos': {'bind': '/data', 'mode': 'ro'}
+                              }
+                          )
 
 
 @with_logging
@@ -163,7 +251,8 @@ def job_dyndns():
                             'AWS_ACCESS_KEY_ID=' + os.environ['DYNDNS_ACCESS_KEY_ID'],
                             'AWS_SECRET_ACCESS_KEY=' + os.environ['DYNDNS_SECRET_ACCESS_KEY']
                           ],
-                          name='dyndns')
+                          name='dyndns'
+                          )
     client.close()
 
 
@@ -189,6 +278,14 @@ def job_backups():
     waitUntilContainerStops(client, 'sonarr-backup')
     backupRadarr(client)
     waitUntilContainerStops(client, 'radarr-backup')
+    backupNZBHydra2(client)
+    waitUntilContainerStops(client, 'nzbhydra2-backup')
+    backupEmby(client)
+    waitUntilContainerStops(client, 'emby-backup')
+    backupFlexget(client)
+    waitUntilContainerStops(client, 'flexget-backup')
+    backupNZBGet(client)
+    waitUntilContainerStops(client, 'nzbget-backup')
 
     backupLMServer(client)
     waitUntilContainerStops(client, 'restic')
