@@ -77,7 +77,7 @@ def backupNZBHydra2(client):
 def backupEmby(client):
     client.containers.run(image='alpine:latest',
                           auto_remove=True,
-                          command='c -zf /backups/emby.tar.gz config plugins data/collections data/playlists data/displaypreferences.db data/users.db data/library.db metadata',
+                          command='c -zf /backups/emby.tar.gz config plugins data/collections data/playlists data/displaypreferences.db data/users.db data/library.db',
                           detach=False,
                           entrypoint='tar',
                           name='emby-backup',
