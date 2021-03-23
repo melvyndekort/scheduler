@@ -111,9 +111,8 @@ def backupFlexget(client):
 def backupNZBGet(client):
     client.containers.run(image='alpine:latest',
                           auto_remove=True,
-                          command='-c /nzbget/nzbget.conf > /backups/nzbget.conf.gz',
+                          command='/bin/sh -c "gzip < /nzbget/nzbget.conf > /backups/nzbget.conf.gz"',
                           detach=False,
-                          entrypoint='gzip',
                           name='nzbget-backup',
                           volumes={
                               '/safe01/backups/lmserver': {'bind': '/backups', 'mode': 'rw'},
