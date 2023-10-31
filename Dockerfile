@@ -22,9 +22,10 @@ FROM python:3-alpine AS runtime
 LABEL org.opencontainers.image.source http://github.com/melvyndekort/job-scheduler
 
 COPY --from=build /venv /venv
+COPY jobs.yml .
 
 ENV PATH="/venv/bin:$PATH"
 
-EXPOSE 5000
+EXPOSE 8000
 
-CMD ["flask", "--app", "trigger_web.main", "run", "--host=0.0.0.0"]
+CMD ["gunicorn", "-w", "2", "-b", "0.0.0.0", "trigger_web.main:app", "--access-logfile", "-"]

@@ -105,6 +105,23 @@ async = ["asgiref (>=3.2)"]
 dotenv = ["python-dotenv"]
 
 [[package]]
+name = "gunicorn"
+version = "21.2.0"
+description = "WSGI HTTP Server for UNIX"
+category = "main"
+optional = false
+python-versions = ">=3.5"
+
+[package.dependencies]
+packaging = "*"
+
+[package.extras]
+eventlet = ["eventlet (>=0.24.1)"]
+gevent = ["gevent (>=1.4.0)"]
+setproctitle = ["setproctitle"]
+tornado = ["tornado (>=0.2)"]
+
+[[package]]
 name = "idna"
 version = "3.4"
 description = "Internationalized Domain Names in Applications (IDNA)"
@@ -318,7 +335,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-ena
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "b282b26ddf603d34ab89a8ce0e8582b28743352a848c0c11b320aeee876fe31d"
+content-hash = "5e843d643461458a8d9a174156f8ad9d248f2ee5d9f56aa118626a4a7659366e"
 
 [metadata.files]
 blinker = []
@@ -330,6 +347,7 @@ coverage = []
 docker = []
 exceptiongroup = []
 flask = []
+gunicorn = []
 idna = []
 importlib-metadata = []
 iniconfig = []
