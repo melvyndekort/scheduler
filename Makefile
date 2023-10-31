@@ -1,4 +1,4 @@
-.PHONY = clean install test build full-build
+.PHONY = clean install test build full-build dev
 .DEFAULT_GOAL := build
 
 clean:
@@ -15,3 +15,6 @@ build: test
 
 full-build:
 	@docker image build -t job-scheduler .
+
+dev:
+	@poetry run flask --app trigger_web.main run --debug
