@@ -26,4 +26,6 @@ COPY app.py /
 
 ENV PATH="/venv/bin:$PATH"
 
-CMD ["python3", "/app.py"]
+ENV FLASK_RUN_PORT=80
+
+CMD ["flask", "--app", "trigger_web.main", "run", "--host=0.0.0.0"]

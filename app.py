@@ -5,14 +5,14 @@ Script that calls / starts the underlying modules
 
 import logging
 
-from scheduler import scheduler
+import trigger_web
 
 
 def main(target):
     '''Main method which calls the modules'''
     logging.basicConfig(level=logging.INFO)
 
-    scheduler.main(target)
+    trigger_web.main()
 
 
 if __name__ == '__main__':
