@@ -2,7 +2,7 @@
 .DEFAULT_GOAL := build
 
 clean:
-	@rm -rf .pytest_cache dist */__pycache__ */*/__pycache__
+	@rm -rf .pytest_cache dist __pycache__ */__pycache__
 
 install:
 	@poetry install
