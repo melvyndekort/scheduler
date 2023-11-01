@@ -22,7 +22,7 @@
     {% endif %}
     <div class="container my-5">
       <h3><i class="fa-brands fa-docker text-primary"></i> Docker jobs</h3>
-      <form id="triggerForm" enctype="multipart/form-data" action="/" method="post">
+      <form id="triggerForm" enctype="multipart/form-data" action="{{ webroot }}" method="post">
         <input type="hidden" id="triggerJobName" name="triggerJobName"/>
         <table class="table">
           <thead>
