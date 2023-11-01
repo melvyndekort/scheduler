@@ -56,6 +56,18 @@ tomli = {version = "*", optional = true, markers = "python_full_version <= \"3.1
 toml = ["tomli"]
 
 [[package]]
+name = "croniter"
+version = "2.0.1"
+description = "croniter provides iteration for datetime object with cron like format"
+category = "main"
+optional = false
+python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+
+[package.dependencies]
+python-dateutil = "*"
+pytz = ">2021.1"
+
+[[package]]
 name = "docker"
 version = "6.1.3"
 description = "A Python library for the Docker Engine API."
@@ -238,6 +250,25 @@ pytest = ">=4.6"
 testing = ["fields", "hunter", "process-tests", "six", "pytest-xdist", "virtualenv"]
 
 [[package]]
+name = "python-dateutil"
+version = "2.8.2"
+description = "Extensions to the standard Python datetime module"
+category = "main"
+optional = false
+python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,>=2.7"
+
+[package.dependencies]
+six = ">=1.5"
+
+[[package]]
+name = "pytz"
+version = "2023.3.post1"
+description = "World timezone definitions, modern and historical"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "pywin32"
 version = "306"
 description = "Python for Window Extensions"
@@ -270,6 +301,22 @@ urllib3 = ">=1.21.1,<3"
 [package.extras]
 socks = ["PySocks (>=1.5.6,!=1.5.7)"]
 use_chardet_on_py3 = ["chardet (>=3.0.2,<6)"]
+
+[[package]]
+name = "schedule"
+version = "1.2.1"
+description = "Job scheduling for humans."
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[[package]]
+name = "six"
+version = "1.16.0"
+description = "Python 2 and 3 compatibility utilities"
+category = "main"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
 
 [[package]]
 name = "tomli"
@@ -335,7 +382,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-ena
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "5e843d643461458a8d9a174156f8ad9d248f2ee5d9f56aa118626a4a7659366e"
+content-hash = "71b2f567de2d062ddd78c6979400fdffc25c92e451fab136b5caed0f711ea257"
 
 [metadata.files]
 blinker = []
@@ -344,6 +391,7 @@ charset-normalizer = []
 click = []
 colorama = []
 coverage = []
+croniter = []
 docker = []
 exceptiongroup = []
 flask = []
@@ -358,9 +406,13 @@ packaging = []
 pluggy = []
 pytest = []
 pytest-cov = []
+python-dateutil = []
+pytz = []
 pywin32 = []
 pyyaml = []
 requests = []
+schedule = []
+six = []
 tomli = []
 urllib3 = []
 websocket-client = []

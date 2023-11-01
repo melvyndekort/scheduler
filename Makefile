@@ -20,4 +20,4 @@ dev:
 	@poetry run flask --app trigger_web.main run --debug
 
 run:
-	@poetry run gunicorn -w 2 -b 0.0.0.0 'trigger_web.main:app' --access-logfile -
+	@poetry run gunicorn -w 2 --threads 2 -b 0.0.0.0 'trigger_web.main:app' --access-logfile -
