@@ -17,14 +17,8 @@ class Job:
     environment: list[str] = field(default_factory=list)
     volumes: list[str] = field(default_factory=list)
 
-    def is_container_running(self):
-        if docker.get_running_by_name(self.container):
-            return True
-        else:
-            return False
-
-    def get_containers(self):
-        return docker.get_running_by_job(self.name)
+    def is_running(self):
+        return docker.is_running(self.name)
 
     def get_image_or_container(self):
         if self.jobtype == 'exec':

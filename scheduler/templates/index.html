@@ -40,11 +40,11 @@
             <tr class="align-middle">
               <td scope="row">
                 {{ job.name }}
-                {% if job.get_containers == None %}
+                {% if job.is_running() %}
                 &nbsp;
-                <a href="#" class="badge bg-danger text-decoration-none">
+                <span class="badge bg-danger">
                   RUNNING
-                </a>
+                </span>
                 {% endif %}
               </td>
               <td>{{ job.jobtype }}</td>
@@ -56,7 +56,7 @@
               {% endif %}
               <td>{{ job.schedule }}</td>
                 {% if job.jobtype == 'exec' %}
-                  {% if job.is_container_running() %}
+                  {% if job.is_running() %}
               <td>
                 <button type="button" onclick="submitTrigger('{{ job.name }}')" value="{{ job.name }}" class="btn btn-sm btn-primary">
                   {% else %}
@@ -64,13 +64,13 @@
                 <button type="button" class="btn btn-sm btn-outline-primary" disabled>
                   {% endif %}
                 {% elif job.jobtype == 'run' %}
-                  {% if job.get_containers() == None %}
-              <td>
-                <button type="button" onclick="submitTrigger('{{ job.name }}')" value="{{ job.name }}" class="btn btn-sm btn-primary">
-                  {% else %}
+                  {% if job.is_running() %}
               <td data-bs-toggle="tooltip" data-bs-title="This job is already running!">
                 <button type="button" class="btn btn-sm btn-outline-primary" disabled>
-                  {% endif %}
+                  {% else %}
+              <td>
+                <button type="button" onclick="submitTrigger('{{ job.name }}')" value="{{ job.name }}" class="btn btn-sm btn-primary">
+                    {% endif %}
                 {% endif %}
                   Trigger
                 </button>

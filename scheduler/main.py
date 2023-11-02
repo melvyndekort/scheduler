@@ -82,7 +82,10 @@ def post_trigger():
         )
 
     job = next((i for i in jobs if i.name == jobname), None)
-    result = docker.run_job(job)
+    if job.jobtype == "exec":
+        result = docker.start_exec(job)
+    elif job.jobtype == "run":
+        result = docker.start_run(job)
 
     if result:
         return render_template(
