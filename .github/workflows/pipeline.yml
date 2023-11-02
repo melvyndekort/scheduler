@@ -37,9 +37,9 @@ jobs:
         run: |
           BRANCH="$(echo ${GITHUB_REF#refs/heads/})"
           if [[ "$BRANCH" == "main" ]]; then
-            echo "DOCKER_TAG=melvyndekort/job-scheduler:latest" >> "$GITHUB_ENV"
+            echo "DOCKER_TAG=melvyndekort/scheduler:latest" >> "$GITHUB_ENV"
           else
-            echo "DOCKER_TAG=melvyndekort/job-scheduler:$BRANCH" >> "$GITHUB_ENV"
+            echo "DOCKER_TAG=melvyndekort/scheduler:$BRANCH" >> "$GITHUB_ENV"
           fi
 
       - name: Build and push
