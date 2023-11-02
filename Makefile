@@ -17,7 +17,7 @@ full-build:
 	@docker image build -t job-scheduler .
 
 dev:
-	@poetry run flask --app trigger_web.main run --debug
+	@poetry run flask --app job_scheduler.main run --debug
 
 run:
-	@poetry run gunicorn -w 2 --threads 2 -b 0.0.0.0 'trigger_web.main:app' --access-logfile -
+	@poetry run gunicorn -w 2 --threads 2 -b 0.0.0.0 'job_scheduler.main:app' --access-logfile -

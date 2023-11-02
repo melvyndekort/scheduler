@@ -3,11 +3,6 @@ name = "job-scheduler"
 version = "0.1.0"
 description = ""
 authors = ["Melvyn de Kort <melvyn@mdekort.nl>"]
-packages = [
-  { include = "trigger_scheduler" },
-  { include = "trigger_docker" },
-  { include = "trigger_web" }
-]
 
 [tool.poetry.dependencies]
 python = "^3.9"

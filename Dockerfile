@@ -28,4 +28,4 @@ ENV PATH="/venv/bin:$PATH"
 
 EXPOSE 8000
 
-CMD ["gunicorn", "-w", "2", "-b", "0.0.0.0", "trigger_web.main:app", "--access-logfile", "-"]
+CMD ["gunicorn", "-w", "2", "-b", "0.0.0.0", "job_scheduler.main:app", "--access-logfile", "-"]
