@@ -7,10 +7,14 @@ logger = logging.getLogger()
 
 client = docker.from_env()
 
-
+@ttl_cache(maxsize=128, ttl=1)
 def get_running_by_job(jobname):
-    return [{'name': c.name, 'id': c.short_id} for c in get_all_containers() if c.labels.get('trigger-job') == jobname]
+    try:
+        return client.containers.get(jobname)
+    except docker.errors.NotFound:
+        return None
 
+@ttl_cache(maxsize=128, ttl=1)
 def get_running_by_name(name):
     try:
         c = client.containers.get(name)
@@ -18,20 +22,15 @@ def get_running_by_name(name):
     except docker.errors.NotFound:
         return False
 
-@ttl_cache(maxsize=128, ttl=1)
-def get_all_containers():
-    logger.info('Retrieving running docker containers')
-    return client.containers.list()
-
 def run_job(job):
     if job.jobtype == 'run':
         container = client.containers.run(
             image=job.image,
             command=job.command,
+            name=job.name,
             detach=True,
             auto_remove=True,
             environment=job.environment,
-            labels={'trigger-job': job.name},
             network=job.network,
             remove=True,
             volumes=job.volumes

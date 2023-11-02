@@ -32,6 +32,8 @@ else:
 if not Path(config).is_file():
     raise Exception('Config is not a valid file')
 
+app = Flask(__name__)
+
 jobs = []
 with open(config, 'r') as stream:
     try:
@@ -51,8 +53,6 @@ with open(config, 'r') as stream:
             jobs.append(job)
     except yaml.YAMLError as e:
         app.logger.error(e)
-
-app = Flask(__name__)
 
 
 @app.route('/')
