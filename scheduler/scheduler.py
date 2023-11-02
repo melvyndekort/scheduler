@@ -13,8 +13,8 @@ logger = logging.getLogger()
 def get_docker_jobs(config):
     docker_jobs = []
 
-    Path(config)
-    if Path.is_file():
+    config_file = Path(config)
+    if config_file.is_file():
         with open(config, 'r') as stream:
             try:
                 data = yaml.safe_load(stream)
