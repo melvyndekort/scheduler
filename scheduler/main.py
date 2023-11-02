@@ -50,6 +50,7 @@ def get_jobs():
     return jobs
 
 @app.route(f'{webroot}/index.html', methods=['GET'])
+@app.route(f'{webroot}/', methods=['GET'])
 @app.route(webroot, methods=['GET'])
 def index_get():
     return render_template(
@@ -58,6 +59,7 @@ def index_get():
     )
 
 @app.route(f'{webroot}/index.html', methods=['POST'])
+@app.route(f'{webroot}/', methods=['POST'])
 @app.route(webroot, methods=['POST'])
 def post_trigger():
     jobname = request.form.get('triggerJobName')
