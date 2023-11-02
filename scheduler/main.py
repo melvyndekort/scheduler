@@ -24,6 +24,11 @@ dictConfig({
 
 app = Flask(__name__)
 
+if 'CONFIG' in os.environ:
+    config = os.environ['CONFIG']
+else:
+    config = 'config.yml'
+
 if 'WEBROOT' in os.environ:
     webroot = os.environ['WEBROOT']
 else:
@@ -35,7 +40,7 @@ def root_get():
     return redirect(webroot, code=302)
 
 def get_jobs():
-    jobs = scheduler.get_docker_jobs()
+    jobs = scheduler.get_docker_jobs(config)
     containers = docker.get_triggered_containers()
 
     for container in containers:

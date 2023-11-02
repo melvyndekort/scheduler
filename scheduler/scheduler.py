@@ -8,10 +8,10 @@ from scheduler.job import Job
 logger = logging.getLogger()
 
 
-def get_docker_jobs():
+def get_docker_jobs(config):
     docker_jobs = []
 
-    with open('jobs.yml', 'r') as stream:
+    with open(config, 'r') as stream:
         try:
             data = yaml.safe_load(stream)
         except yaml.YAMLError as e:
