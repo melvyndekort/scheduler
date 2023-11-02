@@ -48,7 +48,15 @@
                 {% endif %}
               </td>
               <td>{{ job['jobtype'] }}</td>
+              {% if job['image'] == None %}
+              <td class="text-secondary">-</td>
+              {% else %}
+                {% if job['image'].endswith(':latest') %}
+              <td>{{ job['image'][:-7] }}</td>
+                {% else %}
               <td>{{ job['image'] }}</td>
+                {% endif %}
+              {% endif %}
               {% if job['command'] == None %}
               <td class="text-secondary">-</td>
               {% else %}
