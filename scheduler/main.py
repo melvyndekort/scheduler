@@ -1,10 +1,13 @@
 import logging
 import os
+import yaml
 
+from pathlib import Path
 from flask import Flask, render_template, request, redirect
 from logging.config import dictConfig
 
-from scheduler import scheduler, docker
+from scheduler import docker
+from scheduler.job import Job
 
 dictConfig({
     'version': 1,
@@ -22,16 +25,30 @@ dictConfig({
     }
 })
 
-app = Flask(__name__)
-
 if 'CONFIG' in os.environ:
     config = os.environ['CONFIG']
 else:
     config = 'config.yml'
+if not Path(config).is_file():
+    raise Exception('Config is not a valid file')
+
+jobs = []
+with open(config, 'r') as stream:
+    try:
+        data = yaml.safe_load(stream)
+
+        for elem in data['jobs']:
+            job = Job(**elem)
+            jobs.append(job)
+    except yaml.YAMLError as e:
+        app.logger.error(e)
+
+app = Flask(__name__)
 
 if 'WEBROOT' in os.environ:
     webroot = os.environ['WEBROOT']
 else:
+    app.logger.warn('Using default webroot "/scheduler"')
     webroot = '/scheduler'
 
 
@@ -39,23 +56,13 @@ else:
 def root_get():
     return redirect(webroot, code=302)
 
-def get_jobs():
-    jobs = scheduler.get_docker_jobs(config)
-    containers = docker.get_triggered_containers()
-
-    for container in containers:
-        job = next((i for i in jobs if i.name == container['job']), None)
-        job.addContainer(container)
-
-    return jobs
-
 @app.route(f'{webroot}/index.html', methods=['GET'])
 @app.route(f'{webroot}/', methods=['GET'])
 @app.route(webroot, methods=['GET'])
 def index_get():
     return render_template(
         'index.html',
-        docker_jobs=get_jobs()
+        docker_jobs=jobs
     )
 
 @app.route(f'{webroot}/index.html', methods=['POST'])
@@ -68,20 +75,21 @@ def post_trigger():
         return render_template(
             'index.html',
             error='No valid job was triggered',
-            docker_jobs=get_jobs()
+            docker_jobs=jobs
         )
 
-    result = docker.run_job(jobname)
+    job = next((i for i in jobs if i.name == jobname), None)
+    result = docker.run_job(job)
 
     if result:
         return render_template(
             'index.html',
             trigger=f'Job "{jobname}" was successfully triggered',
-            docker_jobs=get_jobs()
+            docker_jobs=jobs
         )
     else:
         return render_template(
             'index.html',
             error=f'Job "{jobname}" could not be triggered',
-            docker_jobs=get_jobs()
+            docker_jobs=jobs
         )

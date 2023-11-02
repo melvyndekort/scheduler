@@ -4,12 +4,11 @@
   <title>Scheduler</title>
   <link rel="icon" href="https://assets.mdekort.nl/logo.svg">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
 </head>
 <body>
   <div class="container">
     <div class="my-5">
-      <h1>Scheduler</h1>
+      <h1><a href="{{ url_for('index_get') }}" class="text-decoration-none" style="color: inherit;">Scheduler</a></h1>
     </div>
     {% if error %}
     <div class="alert alert-danger" role="alert">
@@ -25,12 +24,12 @@
       <h3><i class="fa-brands fa-docker text-primary"></i> Docker jobs</h3>
       <form id="triggerForm" enctype="multipart/form-data" action="{{ url_for('post_trigger') }}" method="post">
         <input type="hidden" id="triggerJobName" name="triggerJobName"/>
-        <table class="table">
+        <table class="table" style="font-size: 0.75rem;">
           <thead>
             <tr>
               <th scope="col">Name</th>
-              <th scope="col">Type</th>
-              <th scope="col">Image</th>
+              <th scope="col">Jobtype</th>
+              <th scope="col">Image/Container</th>
               <th scope="col">Command</th>
               <th scope="col">Schedule</th>
               <th scope="col">Actions</th>
@@ -38,33 +37,41 @@
           </thead>
           <tbody>
           {% for job in docker_jobs %}
-            <tr>
+            <tr class="align-middle">
               <td scope="row">
-                {{ job['name'] }}&nbsp;
-                {% if job['containers']|length > 0 %}
-                <a href="#" class="badge bg-danger text-decoration-none" data-bs-toggle="modal" data-bs-target="#modal-{{ job['name'] }}">
+                {{ job.name }}
+                {% if job.get_containers()|length > 0 %}
+                &nbsp;
+                <a href="#" class="badge bg-danger text-decoration-none" data-bs-toggle="modal" data-bs-target="#modal-{{ job.name }}">
                   RUNNING
                 </a>
                 {% endif %}
               </td>
-              <td>{{ job['jobtype'] }}</td>
-              {% if job['image'] == None %}
+              <td>{{ job.jobtype }}</td>
+              <td>{{ job.get_image_or_container() }}</td>
+              {% if job.command == None %}
               <td class="text-secondary">-</td>
               {% else %}
-                {% if job['image'].endswith(':latest') %}
-              <td>{{ job['image'][:-7] }}</td>
-                {% else %}
-              <td>{{ job['image'] }}</td>
-                {% endif %}
+              <td class="text-truncate" style="max-width: 400px;">{{ job.command }}</td>
               {% endif %}
-              {% if job['command'] == None %}
-              <td class="text-secondary">-</td>
-              {% else %}
-              <td class="text-truncate" style="max-width: 400px;">{{ job['command'] }}</td>
-              {% endif %}
-              <td>{{ job['schedule'] }}</td>
+              <td>{{ job.schedule }}</td>
+                {% if job.jobtype == 'exec' %}
+                  {% if job.is_container_running() %}
               <td>
-                <button type="button" onclick="submitTrigger('{{ job['name'] }}')" value="{{ job['name'] }}" class="btn btn-sm {% if job['containers']|length > 0 %}btn-outline-primary" disabled{% else %}btn-primary"{% endif %}>
+                <button type="button" onclick="submitTrigger('{{ job.name }}')" value="{{ job.name }}" class="btn btn-sm btn-primary">
+                  {% else %}
+              <td data-bs-toggle="tooltip" data-bs-title="Container isn't running!">
+                <button type="button" class="btn btn-sm btn-outline-primary" disabled>
+                  {% endif %}
+                {% elif job.jobtype == 'run' %}
+                  {% if job.get_containers()|length == 0 %}
+              <td>
+                <button type="button" onclick="submitTrigger('{{ job.name }}')" value="{{ job.name }}" class="btn btn-sm btn-primary">
+                  {% else %}
+              <td data-bs-toggle="tooltip" data-bs-title="This job is already running!">
+                <button type="button" class="btn btn-sm btn-outline-primary" disabled>
+                  {% endif %}
+                {% endif %}
                   Trigger
                 </button>
               </td>
@@ -74,8 +81,8 @@
         </table>
       </form>
       {% for job in docker_jobs %}
-      {% if job['containers']|length > 0 %}
-      <div class="modal fade" id="modal-{{ job['name'] }}" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+      {% if job.get_containers()|length > 0 %}
+      <div class="modal fade" id="modal-{{ job.name }}" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
@@ -84,7 +91,7 @@
             </div>
             <div class="modal-body">
               <ul class="list-group list-group-flush">
-                {% for container in job['containers'] %}
+                {% for container in job.get_containers() %}
                 <li class="list-group-item">{{ container['id'] }} - {{ container['name'] }}</li>
                 {% endfor %}
               </ul>
@@ -99,6 +106,9 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
   <script src="https://kit.fontawesome.com/6bfcea34f1.js" crossorigin="anonymous"></script>
   <script language='JavaScript' type='text/javascript'>
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+
     function submitTrigger(value) {
       document.getElementById('triggerJobName').value = value;
       document.getElementById('triggerForm').submit();

@@ -7,6 +7,14 @@ optional = false
 python-versions = ">=3.8"
 
 [[package]]
+name = "cachetools"
+version = "5.3.2"
+description = "Extensible memoizing collections and decorators"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[[package]]
 name = "certifi"
 version = "2023.7.22"
 description = "Python package for providing Mozilla's CA Bundle."
@@ -382,10 +390,11 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-ena
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "71b2f567de2d062ddd78c6979400fdffc25c92e451fab136b5caed0f711ea257"
+content-hash = "72a7a6ea4588d4459dbab0d92865f98a6fc600bbd8ad52c5cfe60377d7482ed1"
 
 [metadata.files]
 blinker = []
+cachetools = []
 certifi = []
 charset-normalizer = []
 click = []
