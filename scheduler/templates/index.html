@@ -8,7 +8,7 @@
 </head>
 <body>
   <div class="container">
-    <div class="container-fluid my-5">
+    <div class="my-5">
       <h1>Scheduler</h1>
     </div>
     {% if error %}
@@ -21,7 +21,7 @@
       {{ trigger }}
     </div>
     {% endif %}
-    <div class="container my-5">
+    <div class="my-5">
       <h3><i class="fa-brands fa-docker text-primary"></i> Docker jobs</h3>
       <form id="triggerForm" enctype="multipart/form-data" action="{{ url_for('post_trigger') }}" method="post">
         <input type="hidden" id="triggerJobName" name="triggerJobName"/>
@@ -60,7 +60,7 @@
               {% if job['command'] == None %}
               <td class="text-secondary">-</td>
               {% else %}
-              <td class="text-truncate" style="max-width: 300px;">{{ job['command'] }}</td>
+              <td class="text-truncate" style="max-width: 400px;">{{ job['command'] }}</td>
               {% endif %}
               <td>{{ job['schedule'] }}</td>
               <td>
