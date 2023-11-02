@@ -27,4 +27,4 @@ ENV PATH="/venv/bin:$PATH"
 
 EXPOSE 8000
 
-CMD ["gunicorn", "-w", "2", "-b", "0.0.0.0", "scheduler.main:app", "--access-logfile", "-"]
+CMD ["gunicorn", "--threads", "4", "--bind", "0.0.0.0", "--access-logfile", "-", "scheduler.main:app"]

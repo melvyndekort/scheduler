@@ -17,7 +17,7 @@ full-build:
 	@docker image build -t scheduler .
 
 dev:
-	@poetry run flask --app scheduler.main run --debug
+	@CONFIG=config.yml poetry run flask --app scheduler.main run --debug
 
 run:
-	@poetry run gunicorn -w 2 --threads 2 -b 0.0.0.0 'scheduler.main:app' --access-logfile -
+	@CONFIG=config.yml poetry run gunicorn --threads 4 --bind 0.0.0.0 --access-logfile - 'scheduler.main:app'

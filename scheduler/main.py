@@ -28,7 +28,7 @@ dictConfig({
 if 'CONFIG' in os.environ:
     config = os.environ['CONFIG']
 else:
-    config = 'config.yml'
+    config = '/config/config.yml'
 if not Path(config).is_file():
     raise Exception('Config is not a valid file')
 
