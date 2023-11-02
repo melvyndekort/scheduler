@@ -22,7 +22,6 @@ FROM python:3-alpine AS runtime
 LABEL org.opencontainers.image.source http://github.com/melvyndekort/scheduler
 
 COPY --from=build /venv /venv
-COPY jobs.yml .
 
 ENV PATH="/venv/bin:$PATH"
 
