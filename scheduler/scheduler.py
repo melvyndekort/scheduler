@@ -3,7 +3,7 @@ import croniter
 import yaml
 import logging
 
-from job_scheduler.job import Job
+from scheduler.job import Job
 
 logger = logging.getLogger()
 

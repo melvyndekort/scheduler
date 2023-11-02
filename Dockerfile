@@ -19,7 +19,7 @@ RUN poetry build && pip install dist/*.whl
 
 FROM python:3-alpine AS runtime
 
-LABEL org.opencontainers.image.source http://github.com/melvyndekort/job-scheduler
+LABEL org.opencontainers.image.source http://github.com/melvyndekort/scheduler
 
 COPY --from=build /venv /venv
 COPY jobs.yml .
@@ -28,4 +28,4 @@ ENV PATH="/venv/bin:$PATH"
 
 EXPOSE 8000
 
-CMD ["gunicorn", "-w", "2", "-b", "0.0.0.0", "job_scheduler.main:app", "--access-logfile", "-"]
+CMD ["gunicorn", "-w", "2", "-b", "0.0.0.0", "scheduler.main:app", "--access-logfile", "-"]

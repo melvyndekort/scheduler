@@ -14,10 +14,10 @@ build: test
 	@poetry build
 
 full-build:
-	@docker image build -t job-scheduler .
+	@docker image build -t scheduler .
 
 dev:
-	@poetry run flask --app job_scheduler.main run --debug
+	@poetry run flask --app scheduler.main run --debug
 
 run:
-	@poetry run gunicorn -w 2 --threads 2 -b 0.0.0.0 'job_scheduler.main:app' --access-logfile -
+	@poetry run gunicorn -w 2 --threads 2 -b 0.0.0.0 'scheduler.main:app' --access-logfile -

@@ -4,7 +4,7 @@ import os
 from flask import Flask, render_template, request, redirect
 from logging.config import dictConfig
 
-from job_scheduler import scheduler, docker
+from scheduler import scheduler, docker
 
 dictConfig({
     'version': 1,

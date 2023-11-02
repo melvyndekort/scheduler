@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "job-scheduler"
+name = "scheduler"
 version = "0.1.0"
 description = ""
 authors = ["Melvyn de Kort <melvyn@mdekort.nl>"]
