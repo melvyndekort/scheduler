@@ -37,6 +37,15 @@ with open(config, 'r') as stream:
     try:
         data = yaml.safe_load(stream)
 
+        global webroot
+        if 'WEBROOT' in os.environ:
+            webroot = os.environ['WEBROOT']
+        elif data.get('webroot'):
+            webroot = data['webroot']
+        else:
+            app.logger.warn('Using default webroot "/scheduler"')
+            webroot = '/scheduler'
+
         for elem in data['jobs']:
             job = Job(**elem)
             jobs.append(job)
@@ -44,12 +53,6 @@ with open(config, 'r') as stream:
         app.logger.error(e)
 
 app = Flask(__name__)
-
-if 'WEBROOT' in os.environ:
-    webroot = os.environ['WEBROOT']
-else:
-    app.logger.warn('Using default webroot "/scheduler"')
-    webroot = '/scheduler'
 
 
 @app.route('/')
