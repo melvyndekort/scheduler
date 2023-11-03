@@ -32,20 +32,6 @@ jobs:
         run: poetry install
       - name: Run tests
         run: poetry run pytest --cov=./ --cov-report=xml
-      - name: Archive coverage artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: coverage
-          path: coverage.xml
-
-  coverage:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Download coverage artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: coverage
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
