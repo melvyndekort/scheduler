@@ -327,6 +327,17 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
 
 [[package]]
+name = "supervisor"
+version = "4.2.5"
+description = "A system for controlling process state under UNIX"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.extras]
+testing = ["pytest", "pytest-cov"]
+
+[[package]]
 name = "tomli"
 version = "2.0.1"
 description = "A lil' TOML parser"
@@ -390,7 +401,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-ena
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "72a7a6ea4588d4459dbab0d92865f98a6fc600bbd8ad52c5cfe60377d7482ed1"
+content-hash = "a1987154d5de5ca856cd1f3ff17807d8592a8735c7e2de21c40b722a25d10320"
 
 [metadata.files]
 blinker = []
@@ -422,6 +433,7 @@ pyyaml = []
 requests = []
 schedule = []
 six = []
+supervisor = []
 tomli = []
 urllib3 = []
 websocket-client = []

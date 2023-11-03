@@ -25,6 +25,9 @@ COPY --from=build /venv /venv
 
 ENV PATH="/venv/bin:$PATH"
 
+COPY docker/supervisord.conf /etc/supervisord.conf
+COPY docker/config.yml /config/config.yml
+
 EXPOSE 8000
 
-CMD ["gunicorn", "--threads", "4", "--bind", "0.0.0.0", "--access-logfile", "-", "scheduler.main:app"]
+CMD ["supervisord", "-c", "/etc/supervisord.conf"]

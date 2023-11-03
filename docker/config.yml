@@ -1,0 +1,6 @@
+webroot: '/scheduler'
+jobs:
+  - name: 'noop'
+    jobtype: 'run'
+    image: 'scratch'
+    schedule: '@never'

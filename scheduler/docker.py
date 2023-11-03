@@ -3,7 +3,7 @@ import docker
 
 from cachetools.func import ttl_cache
 
-logger = logging.getLogger()
+logger = logging.getLogger(__name__)
 
 client = docker.from_env()
 

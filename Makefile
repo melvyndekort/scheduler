@@ -1,5 +1,5 @@
-.PHONY = clean install test build full-build dev
-.DEFAULT_GOAL := build
+.PHONY: clean install test build full-build dev run scheduler
+.DEFAULT_GOAL: build
 
 clean:
 	@rm -rf .pytest_cache dist __pycache__ */__pycache__
@@ -17,7 +17,11 @@ full-build:
 	@docker image build -t scheduler .
 
 dev:
-	@CONFIG=config.yml poetry run flask --app scheduler.main run --debug
+	@CONFIG=tests/config.yml poetry run python3 -m scheduler.flask
+#@CONFIG=tests/config.yml poetry run flask --app scheduler.flask run --debug
 
 run:
-	@CONFIG=config.yml poetry run gunicorn --threads 4 --bind 0.0.0.0 --access-logfile - 'scheduler.main:app'
+	@CONFIG=tests/config.yml poetry run gunicorn -b 0.0.0.0:8000 --access-logfile '-' --error-logfile '-' scheduler.flask:app
+
+scheduler:
+	@CONFIG=tests/config.yml poetry run python3 -m scheduler.main
