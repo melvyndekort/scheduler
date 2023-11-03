@@ -1,0 +1,9 @@
+plugins:
+  pylint:
+    enabled: true
+  markdownlint:
+    enabled: true
+  pep8:
+    enabled: true
+  git-legal:
+    enabled: true
