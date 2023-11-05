@@ -13,3 +13,7 @@
 ## Purpose
 
 Run scheduled jobs in Docker and trigger them manually via a web interface
+
+## Environment variables
+
+The minimal environment variables are:

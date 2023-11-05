@@ -3,6 +3,7 @@ import docker
 import os
 
 from cachetools.func import ttl_cache
+from scheduler import notify
 
 logger = logging.getLogger(__name__)
 
@@ -18,17 +19,20 @@ def is_running(name):
 
 def start_exec(job):
     logger.info(f'Executing command in running container {job.container}:\n{job.command}')
-    container = client.containers.get(job.container)
-    exec_id = client.api.exec_create(
-        container=container.id,
-        cmd=job.command,
-        user=job.user
-    )
-    client.api.exec_start(
-        exec_id=exec_id,
-        detach=True
-    )
-    return True
+    try:
+        container = client.containers.get(job.container)
+        container.exec_run(
+            job.command,
+            user=job.user,
+            detach=True,
+            stream=True
+        )
+        return True
+    except:
+        message = f'Executing command in {job.container} failed'
+        logger.error(message)
+        notify.notify(message)
+        raise
 
 def replace_environment(envlist):
     copy = []
@@ -43,15 +47,22 @@ def replace_environment(envlist):
     return copy
 
 def start_run(job):
-    container = client.containers.run(
-        image=job.image,
-        command=job.command,
-        name=job.name,
-        detach=True,
-        auto_remove=True,
-        environment=replace_environment(job.environment),
-        network=job.network,
-        remove=True,
-        volumes=job.volumes
-    )
-    return container.short_id
+    logger.info(f'Running container {job.name}')
+    try:
+        container = client.containers.run(
+            image=job.image,
+            command=job.command,
+            name=job.name,
+            detach=True,
+            auto_remove=True,
+            environment=replace_environment(job.environment),
+            network=job.network,
+            remove=True,
+            volumes=job.volumes
+        )
+        return container.short_id
+    except:
+        message = f'Running container {job.name} failed'
+        logger.error(message)
+        notify.notify(message)
+        raise

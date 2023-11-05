@@ -17,7 +17,6 @@ def run_job(job):
     logger.info(f'Triggering job {job.name}')
     try:
         if job.jobtype == 'exec':
-            logger.info(f'Triggering {job.name}')
             docker.start_exec(job)
         elif job.jobtype == 'run':
             docker.start_run(job)

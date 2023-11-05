@@ -18,7 +18,6 @@ full-build:
 
 dev:
 	@CONFIG=tests/config.yml poetry run python3 -m scheduler.flask
-#@CONFIG=tests/config.yml poetry run flask --app scheduler.flask run --debug
 
 run:
 	@CONFIG=tests/config.yml poetry run gunicorn -b 0.0.0.0:8000 --access-logfile '-' --error-logfile '-' scheduler.flask:app

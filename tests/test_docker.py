@@ -5,11 +5,16 @@ import os
 from scheduler import docker as sut
 from scheduler.job import Job
 
+
 @pytest.fixture
 def docker_mock():
     class MockContainer():
         id = 42
         short_id = 42
+
+        def exec_run(self, cmd, **kwargs):
+            assert cmd == 'exec-command'
+            assert kwargs.get('user') == ''
 
     class MockContainers():
         def get(self, name):
@@ -24,20 +29,8 @@ def docker_mock():
             assert kwargs.get('image') == 'run-image'
             return MockContainer()
 
-    class MockApi():
-        def exec_create(self, container, cmd, user):
-            assert container == 42
-            assert cmd == 'exec-command'
-            assert user == None
-            return 'exec-id'
-
-        def exec_start(self, exec_id, detach):
-            assert exec_id == 'exec-id'
-            assert detach
-
     class MockClient():
         containers = MockContainers()
-        api = MockApi()
     
     return MockClient()
 
@@ -54,7 +47,7 @@ def test_is_running_fail(monkeypatch, docker_mock):
     result = sut.is_running('failure')
     assert not result
 
-def test_start_exec(monkeypatch, docker_mock):
+def test_start_exec_success(monkeypatch, docker_mock):
     monkeypatch.setattr(sut, 'client', docker_mock)
     job = Job(
         name='exec-name',

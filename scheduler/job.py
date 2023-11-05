@@ -13,12 +13,15 @@ class Job:
     network: str = field(default=None)
     image: str = field(default=None)
     container: str = field(default=None)
-    user: str = field(default=None)
+    user: str = field(default='')
     environment: list[str] = field(default_factory=list)
     volumes: list[str] = field(default_factory=list)
 
     def is_running(self):
-        return docker.is_running(self.name)
+        if self.jobtype == 'exec':
+            return docker.is_running(self.container)
+        elif self.jobtype == 'run':
+            return docker.is_running(self.name)
 
     def get_image_or_container(self):
         if self.jobtype == 'exec':

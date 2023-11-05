@@ -41,6 +41,20 @@ def index_get():
         docker_jobs=jobs
     )
 
+def show_success(message, jobs):
+    return render_template(
+            'index.html',
+            trigger=message,
+            docker_jobs=jobs
+    )
+
+def show_error(message, jobs):
+    return render_template(
+        'index.html',
+        error=message,
+        docker_jobs=jobs
+    )
+
 @app.route(f'{webroot}/index.html', methods=['POST'])
 @app.route(f'{webroot}/', methods=['POST'])
 @app.route(webroot, methods=['POST'])
@@ -48,11 +62,8 @@ def post_trigger():
     jobname = request.form.get('triggerJobName')
 
     if jobname is None:
-        return render_template(
-            'index.html',
-            error='No valid job was triggered',
-            docker_jobs=jobs
-        )
+        message = 'No valid job was triggered'
+        return show_error(message, jobs)
 
     job = next((i for i in jobs if i.name == jobname), None)
     if job.jobtype == "exec":
@@ -61,17 +72,12 @@ def post_trigger():
         result = docker.start_run(job)
 
     if result:
-        return render_template(
-            'index.html',
-            trigger=f'Job "{jobname}" was successfully triggered',
-            docker_jobs=jobs
-        )
+        message = f'Job "{jobname}" was successfully triggered'
+        return show_success(message, jobs)
     else:
-        return render_template(
-            'index.html',
-            error=f'Job "{jobname}" could not be triggered',
-            docker_jobs=jobs
-        )
+        message = f'Job "{jobname}" could not be triggered'
+        return show_error(message, jobs)
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000, debug=True)

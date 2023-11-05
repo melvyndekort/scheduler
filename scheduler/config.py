@@ -20,7 +20,6 @@ with open(config, 'r') as stream:
     except yaml.YAMLError as e:
         logger.error(e)
 
-
 def get_webroot():
     if 'WEBROOT' in os.environ:
         webroot = os.environ['WEBROOT']

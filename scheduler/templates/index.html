@@ -40,7 +40,7 @@
             <tr class="align-middle">
               <td scope="row">
                 {{ job.name }}
-                {% if job.is_running() %}
+                {% if job.jobtype == 'run' and job.is_running() %}
                 &nbsp;
                 <span class="badge bg-danger">
                   RUNNING
