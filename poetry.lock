@@ -1,4 +1,29 @@
 [[package]]
+name = "apscheduler"
+version = "3.10.4"
+description = "In-process task scheduler with Cron-like capabilities"
+category = "main"
+optional = false
+python-versions = ">=3.6"
+
+[package.dependencies]
+pytz = "*"
+six = ">=1.4.0"
+tzlocal = ">=2.0,<3.0.0 || >=4.0.0"
+
+[package.extras]
+doc = ["sphinx", "sphinx-rtd-theme"]
+gevent = ["gevent"]
+mongodb = ["pymongo (>=3.0)"]
+redis = ["redis (>=3.0)"]
+rethinkdb = ["rethinkdb (>=2.4.0)"]
+sqlalchemy = ["sqlalchemy (>=1.4)"]
+testing = ["pytest", "pytest-asyncio", "pytest-cov", "pytest-tornado5"]
+tornado = ["tornado (>=4.3)"]
+twisted = ["twisted"]
+zookeeper = ["kazoo"]
+
+[[package]]
 name = "blinker"
 version = "1.7.0"
 description = "Fast, simple object-to-object and broadcast signaling"
@@ -62,18 +87,6 @@ tomli = {version = "*", optional = true, markers = "python_full_version <= \"3.1
 
 [package.extras]
 toml = ["tomli"]
-
-[[package]]
-name = "croniter"
-version = "2.0.1"
-description = "croniter provides iteration for datetime object with cron like format"
-category = "main"
-optional = false
-python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
-
-[package.dependencies]
-python-dateutil = "*"
-pytz = ">2021.1"
 
 [[package]]
 name = "docker"
@@ -258,17 +271,6 @@ pytest = ">=4.6"
 testing = ["fields", "hunter", "process-tests", "six", "pytest-xdist", "virtualenv"]
 
 [[package]]
-name = "python-dateutil"
-version = "2.8.2"
-description = "Extensions to the standard Python datetime module"
-category = "main"
-optional = false
-python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,>=2.7"
-
-[package.dependencies]
-six = ">=1.5"
-
-[[package]]
 name = "pytz"
 version = "2023.3.post1"
 description = "World timezone definitions, modern and historical"
@@ -311,14 +313,6 @@ socks = ["PySocks (>=1.5.6,!=1.5.7)"]
 use_chardet_on_py3 = ["chardet (>=3.0.2,<6)"]
 
 [[package]]
-name = "schedule"
-version = "1.2.1"
-description = "Job scheduling for humans."
-category = "main"
-optional = false
-python-versions = ">=3.7"
-
-[[package]]
 name = "six"
 version = "1.16.0"
 description = "Python 2 and 3 compatibility utilities"
@@ -344,6 +338,28 @@ description = "A lil' TOML parser"
 category = "dev"
 optional = false
 python-versions = ">=3.7"
+
+[[package]]
+name = "tzdata"
+version = "2023.3"
+description = "Provider of IANA time zone data"
+category = "main"
+optional = false
+python-versions = ">=2"
+
+[[package]]
+name = "tzlocal"
+version = "5.2"
+description = "tzinfo object for the local timezone"
+category = "main"
+optional = false
+python-versions = ">=3.8"
+
+[package.dependencies]
+tzdata = {version = "*", markers = "platform_system == \"Windows\""}
+
+[package.extras]
+devenv = ["pytest (>=4.3)", "pytest-mock (>=3.3)", "pytest-cov", "check-manifest", "zest.releaser"]
 
 [[package]]
 name = "urllib3"
@@ -401,9 +417,10 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-ena
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "a1987154d5de5ca856cd1f3ff17807d8592a8735c7e2de21c40b722a25d10320"
+content-hash = "8ba734b1519c5896ad1903d6a3fd7a502da44a3ab2bb043865b0f5d7862922db"
 
 [metadata.files]
+apscheduler = []
 blinker = []
 cachetools = []
 certifi = []
@@ -411,7 +428,6 @@ charset-normalizer = []
 click = []
 colorama = []
 coverage = []
-croniter = []
 docker = []
 exceptiongroup = []
 flask = []
@@ -426,15 +442,15 @@ packaging = []
 pluggy = []
 pytest = []
 pytest-cov = []
-python-dateutil = []
 pytz = []
 pywin32 = []
 pyyaml = []
 requests = []
-schedule = []
 six = []
 supervisor = []
 tomli = []
+tzdata = []
+tzlocal = []
 urllib3 = []
 websocket-client = []
 werkzeug = []
