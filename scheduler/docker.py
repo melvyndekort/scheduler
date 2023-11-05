@@ -1,5 +1,6 @@
 import logging
 import docker
+import os
 
 from cachetools.func import ttl_cache
 
@@ -29,6 +30,18 @@ def start_exec(job):
     )
     return True
 
+def replace_environment(envlist):
+    copy = []
+    for env in envlist:
+        if '${' in env:
+            envname = env[env.find('${')+2 : env.find('}')]
+            item = env.replace('${' + envname + '}', os.environ[envname])
+            copy.append(item)
+        else:
+            copy.append(env)
+
+    return copy
+
 def start_run(job):
     container = client.containers.run(
         image=job.image,
@@ -36,7 +49,7 @@ def start_run(job):
         name=job.name,
         detach=True,
         auto_remove=True,
-        environment=job.environment,
+        environment=replace_environment(job.environment),
         network=job.network,
         remove=True,
         volumes=job.volumes
