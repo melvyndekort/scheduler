@@ -14,15 +14,15 @@ scheduler = BlockingScheduler()
 
 
 def run_job(job):
-    logger.info(f'Triggering {job.name}')
-
-#    if job.jobtype == 'exec':
-#        logger.info(f'Triggering {job.name}')
-#        docker.start_exec(job)
-#    elif job.jobtype == 'run':
-#        docker.start_run(job)
-#    else:
-#        raise NotImplemented
+    logger.info(f'Triggering job {job.name}')
+    try:
+        if job.jobtype == 'exec':
+            logger.info(f'Triggering {job.name}')
+            docker.start_exec(job)
+        elif job.jobtype == 'run':
+            docker.start_run(job)
+    except:
+        logger.error(f'An exception occured while triggering {job.name}')
 
 def main():
     for job in jobs:
@@ -34,6 +34,7 @@ def main():
             args=[job]
         )
 
+    logger.info('Starting scheduler')
     scheduler.start()
 
 
