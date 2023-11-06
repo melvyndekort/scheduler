@@ -1,4 +1,4 @@
-.PHONY: clean install test build full-build dev run scheduler
+.PHONY: clean install test build full-build pylint dev run scheduler
 .DEFAULT_GOAL: build
 
 clean:
@@ -15,6 +15,9 @@ build: test
 
 full-build:
 	@docker image build -t scheduler .
+
+pylint:
+	@poetry run pylint scheduler
 
 dev:
 	@CONFIG=tests/config.yml poetry run python3 -m scheduler.flask

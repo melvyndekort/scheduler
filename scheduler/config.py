@@ -1,8 +1,7 @@
-import yaml
 import os
 import logging
-
 from pathlib import Path
+import yaml
 from scheduler.job import Job
 
 logger = logging.getLogger(__name__)
@@ -27,7 +26,7 @@ def get_webroot():
     elif data.get('webroot'):
         webroot = data['webroot']
     else:
-        logger.warn('Using default webroot "/scheduler"')
+        logger.warning('Using default webroot "/scheduler"')
         webroot = '/scheduler'
     return webroot
 

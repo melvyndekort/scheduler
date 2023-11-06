@@ -1,5 +1,4 @@
 from dataclasses import dataclass, field
-
 from scheduler import docker
 
 @dataclass()

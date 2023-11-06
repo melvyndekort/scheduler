@@ -1,8 +1,7 @@
-import logging
-import docker
 import os
-
+import logging
 from cachetools.func import ttl_cache
+import docker
 from scheduler import notify
 
 logger = logging.getLogger(__name__)
@@ -18,7 +17,7 @@ def is_running(name):
         return False
 
 def start_exec(job):
-    logger.info(f'Executing command in running container {job.container}:\n{job.command}')
+    logger.info('Executing command in running container %s: %s', job.container, job.command)
     try:
         container = client.containers.get(job.container)
         container.exec_run(
@@ -47,7 +46,7 @@ def replace_environment(envlist):
     return copy
 
 def start_run(job):
-    logger.info(f'Running container {job.name}')
+    logger.info('Running container %s', job.name)
     try:
         container = client.containers.run(
             image=job.image,

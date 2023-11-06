@@ -45,11 +45,11 @@ def test_run_job_failure(monkeypatch, config):
             raise Exception()
 
     class mock_logger:
-        def info(self, message):
+        def info(self, message, *args):
             pass
 
-        def error(self, message):
-            assert 'foobar' in message
+        def error(self, message, *args):
+            assert 'foobar' in args
 
     monkeypatch.setattr(main, 'docker', mock_docker())
     monkeypatch.setattr(main, 'logger', mock_logger())
