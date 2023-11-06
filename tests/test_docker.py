@@ -2,6 +2,8 @@ import pytest
 import docker
 import os
 
+os.environ['SLACK_WEBHOOK'] = 'foobar'
+
 from scheduler import docker as sut
 from scheduler.job import Job
 
@@ -20,7 +22,7 @@ def docker_mock():
         def get(self, name):
             if name == 'success':
                 return True
-            elif name == 'failure':
+            elif name in ['failure','exec-container-fail']:
                 raise docker.errors.NotFound('failure')
             elif name == 'exec-container':
                 return MockContainer()
@@ -58,6 +60,28 @@ def test_start_exec_success(monkeypatch, docker_mock):
     )
     sut.start_exec(job)
 
+def test_start_exec_fail(monkeypatch, docker_mock):
+    monkeypatch.setattr(sut, 'client', docker_mock)
+
+    called = False
+    class notify_mock:
+        def notify(self, message):
+            nonlocal called
+            called = True
+            assert message == 'Executing command in exec-container-fail failed'
+    monkeypatch.setattr(sut, 'notify', notify_mock())
+
+    job = Job(
+        name='exec-name',
+        jobtype='exec',
+        schedule='exec-schedule',
+        container='exec-container-fail',
+        command='exec-command-fail'
+    )
+    with pytest.raises(docker.errors.NotFound):
+        sut.start_exec(job)
+    assert called
+
 def test_start_run(monkeypatch, docker_mock):
     monkeypatch.setattr(sut, 'client', docker_mock)
     job = Job(
@@ -72,9 +96,10 @@ def test_start_run(monkeypatch, docker_mock):
 def test_replace_environment():
     os.environ['FOOBAR'] = 'testval'
     os.environ['FOOBAR2'] = 'testval2'
-    envlist = ['foobar=${FOOBAR}', 'foobar2=${FOOBAR2}']
+    envlist = ['foobar=${FOOBAR}', 'foobar2=${FOOBAR2}', 'foobar3=testval3']
 
     envlist = sut.replace_environment(envlist)
 
     assert envlist[0] == 'foobar=testval'
     assert envlist[1] == 'foobar2=testval2'
+    assert envlist[2] == 'foobar3=testval3'
