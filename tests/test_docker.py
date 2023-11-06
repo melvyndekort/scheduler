@@ -28,6 +28,8 @@ def docker_mock():
                 return MockContainer()
 
         def run(self, **kwargs):
+            if kwargs.get('image') == 'run-image-fail':
+                raise docker.errors.ContainerError
             assert kwargs.get('image') == 'run-image'
             return MockContainer()
 
@@ -92,6 +94,27 @@ def test_start_run(monkeypatch, docker_mock):
     )
     result = sut.start_run(job)
     assert result == 42
+
+def test_start_run_failed(monkeypatch, docker_mock):
+    monkeypatch.setattr(sut, 'client', docker_mock)
+
+    called = False
+    class notify_mock:
+        def notify(self, message):
+            nonlocal called
+            called = True
+            assert message == 'Running container run-name failed'
+    monkeypatch.setattr(sut, 'notify', notify_mock())
+
+    job = Job(
+        name='run-name',
+        jobtype='run',
+        schedule='run-schedule',
+        image='run-image-fail'
+    )
+    with pytest.raises(Exception):
+        result = sut.start_run(job)
+    assert called
 
 def test_replace_environment():
     os.environ['FOOBAR'] = 'testval'
