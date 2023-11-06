@@ -16,26 +16,13 @@ jobs:
 ''')
     os.environ['CONFIG'] = config
 
-def test_main(monkeypatch, config):
-    from scheduler import main
-
-    class mock_scheduler:
-        def add_job(self, **kwargs):
-            assert kwargs['id'] == 'foobar'
-
-        def start(self):
-            pass
-
-    monkeypatch.setattr(main, 'jobs', [])
-    monkeypatch.setattr(main, 'scheduler', mock_scheduler())
-
-    main.main()
-
 def test_main_add_job(monkeypatch, config):
     from scheduler import main
 
+    called = False
     def mock_start():
-        pass
+        nonlocal called
+        called = True
 
     monkeypatch.setattr(main.scheduler, 'start', mock_start)
 
@@ -43,6 +30,7 @@ def test_main_add_job(monkeypatch, config):
     jobs = main.scheduler.get_jobs()
     assert len(jobs) == 1
     assert jobs[0].id == 'foobar'
+    assert called
 
 def test_run_job_success(monkeypatch, config):
     from scheduler import main
