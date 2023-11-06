@@ -1,6 +1,4 @@
 plugins:
-  pylint:
-    enabled: true
   markdownlint:
     enabled: true
   pep8:
