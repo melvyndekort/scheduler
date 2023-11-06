@@ -22,6 +22,7 @@ def run_job(job):
     except Exception as e:
         logger.error('An exception occured while triggering %s: %s', job.name, str(e))
 
+
 def main():
     for job in jobs:
         scheduler.add_job(

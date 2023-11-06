@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 from scheduler import docker
 
+
 @dataclass()
 class Job:
     """Class to define a scheduled job."""

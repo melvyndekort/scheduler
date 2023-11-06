@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect
 from logging.config import dictConfig
+from scheduler import config, docker
 
 dictConfig({
     'version': 1,
@@ -23,7 +24,6 @@ dictConfig({
 
 app = Flask(__name__)
 
-from scheduler import config, docker
 webroot = config.get_webroot()
 jobs = config.get_jobs()
 
@@ -31,6 +31,7 @@ jobs = config.get_jobs()
 @app.route('/')
 def root_get():
     return redirect(webroot, code=302)
+
 
 @app.route(f'{webroot}/index.html', methods=['GET'])
 @app.route(f'{webroot}/', methods=['GET'])
@@ -41,6 +42,7 @@ def index_get():
         docker_jobs=jobs
     )
 
+
 def show_success(message, jobs):
     return render_template(
             'index.html',
@@ -48,12 +50,14 @@ def show_success(message, jobs):
             docker_jobs=jobs
     )
 
+
 def show_error(message, jobs):
     return render_template(
         'index.html',
         error=message,
         docker_jobs=jobs
     )
+
 
 @app.route(f'{webroot}/index.html', methods=['POST'])
 @app.route(f'{webroot}/', methods=['POST'])

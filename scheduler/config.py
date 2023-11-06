@@ -20,6 +20,7 @@ with open(config, 'r') as stream:
         logger.error(e)
         raise
 
+
 def get_webroot():
     if 'WEBROOT' in os.environ:
         webroot = os.environ['WEBROOT']
@@ -29,6 +30,7 @@ def get_webroot():
         logger.warning('Using default webroot "/scheduler"')
         webroot = '/scheduler'
     return webroot
+
 
 def get_jobs():
     jobs = []
