@@ -4,18 +4,6 @@ import os
 from scheduler.job import Job
 
 
-@pytest.fixture
-def config(tmpdir):
-    config = f'{tmpdir}/config.yml'
-    with open(config, "w") as file:
-        file.write('''
-jobs:
-  - name: 'foobar'
-    jobtype: 'run'
-    schedule: '* * * * *'
-''')
-    os.environ['CONFIG'] = config
-
 def test_main_add_job(monkeypatch, config):
     from scheduler import main
 
