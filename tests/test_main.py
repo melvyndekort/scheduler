@@ -31,6 +31,19 @@ def test_main(monkeypatch, config):
 
     main.main()
 
+def test_main_add_job(monkeypatch, config):
+    from scheduler import main
+
+    def mock_start():
+        pass
+
+    monkeypatch.setattr(main.scheduler, 'start', mock_start)
+
+    main.main()
+    jobs = main.scheduler.get_jobs()
+    assert len(jobs) == 1
+    assert jobs[0].id == 'foobar'
+
 def test_run_job_success(monkeypatch, config):
     from scheduler import main
 
