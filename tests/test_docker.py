@@ -70,7 +70,7 @@ def test_start_exec_fail(monkeypatch, docker_mock):
         def notify(self, message):
             nonlocal called
             called = True
-            assert message == 'Executing command in exec-container-fail failed'
+            assert 'Executing command in exec-container-fail failed:' in message
     monkeypatch.setattr(sut, 'notify', notify_mock())
 
     job = Job(
