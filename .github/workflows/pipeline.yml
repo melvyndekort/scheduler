@@ -9,9 +9,10 @@ on:
       - '.github/workflows/pipeline.yml'
       - 'scheduler/**'
       - 'tests/**'
-      - 'poetry.lock'
       - 'pyproject.toml'
+      - 'poetry.lock'
       - 'Dockerfile'
+      - 'codecov.yml'
   pull_request:
 
 jobs:
