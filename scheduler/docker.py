@@ -18,8 +18,19 @@ def is_running(name):
         return False
 
 
+def execute(job):
+    if job.jobtype == "exec":
+        return start_exec(job)
+    elif job.jobtype == "run":
+        return start_run(job)
+
+
 def start_exec(job):
-    logger.info('Executing command in running container %s: %s', job.container, job.command)
+    logger.info(
+        'Executing command in running container %s: %s',
+        job.container,
+        job.command
+    )
     try:
         container = client.containers.get(job.container)
         container.exec_run(

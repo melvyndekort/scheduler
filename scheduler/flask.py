@@ -65,15 +65,11 @@ def show_error(message, jobs):
 def post_trigger():
     jobname = request.form.get('triggerJobName')
 
-    if jobname is None:
-        message = 'No valid job was triggered'
-        return show_error(message, jobs)
+    if not jobname:
+        return show_error('No valid job was triggered', jobs)
 
     job = next((i for i in jobs if i.name == jobname), None)
-    if job.jobtype == "exec":
-        result = docker.start_exec(job)
-    elif job.jobtype == "run":
-        result = docker.start_run(job)
+    result = docker.execute(job)
 
     if result:
         message = f'Job "{jobname}" was successfully triggered'

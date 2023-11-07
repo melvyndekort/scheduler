@@ -20,7 +20,11 @@ def run_job(job):
         elif job.jobtype == 'run':
             docker.start_run(job)
     except Exception as e:
-        logger.error('An exception occured while triggering %s: %s', job.name, str(e))
+        logger.error(
+            'An exception occured while triggering %s: %s',
+            job.name,
+            str(e)
+        )
 
 
 def main():
