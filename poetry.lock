@@ -528,7 +528,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-ena
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "d4a6eff0b6eacc3dcf1a0b6f16a125b6832f9c24d8026786a6152f54f86fb00f"
+content-hash = "17dde6c247b26641983ce1b0793e7d6c024bb2fcdfa2b3084e81931eca90bdee"
 
 [metadata.files]
 apscheduler = []

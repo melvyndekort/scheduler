@@ -6,19 +6,19 @@ authors = ["Melvyn de Kort <melvyn@mdekort.nl>"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
-PyYAML = "^6.0.1"
-docker = "^6.1.3"
-Flask = "^3.0.0"
-gunicorn = "^21.2.0"
-cachetools = "^5.3.2"
-supervisor = "^4.2.5"
-APScheduler = "^3.10.4"
-slack-sdk = "^3.23.0"
+PyYAML = "^6.0"
+docker = "^6.1"
+Flask = "^3.0"
+gunicorn = "^21.2"
+cachetools = "^5.3"
+supervisor = "^4.2"
+APScheduler = "^3.10"
+slack-sdk = "^3.23"
 
 [tool.poetry.dev-dependencies]
-pytest = "^7.4.2"
-pytest-cov = "^4.1.0"
-pylint = "^3.0.2"
+pytest = "^7.4"
+pytest-cov = "^4.1"
+pylint = "^3.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
