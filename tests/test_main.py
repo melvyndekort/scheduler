@@ -34,7 +34,7 @@ def test_run_job_success(monkeypatch, config):
         jobtype='run',
         schedule='foobar'
     )
-    main.run_job(job);
+    main.run_job(job)
 
 
 def test_run_job_failure(monkeypatch, config):
@@ -59,4 +59,4 @@ def test_run_job_failure(monkeypatch, config):
         jobtype='run',
         schedule='foobar'
     )
-    main.run_job(job);
+    main.run_job(job)
