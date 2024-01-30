@@ -1,4 +1,4 @@
-FROM python:3-slim-bookworm AS base
+FROM python:3-slim AS base
 
 RUN pip install --upgrade pip
 RUN pip install "poetry>=1.6,<1.7"
@@ -17,7 +17,7 @@ COPY . .
 RUN poetry build && pip install dist/*.whl
 
 
-FROM python:3.13.0a3-alpine3.18 AS runtime
+FROM python:3-alpine3.19 AS runtime
 
 LABEL org.opencontainers.image.source http://github.com/melvyndekort/scheduler
 
