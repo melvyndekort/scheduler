@@ -14,7 +14,7 @@ gunicorn = "^22.0"
 cachetools = "^5.3"
 supervisor = "^4.2"
 APScheduler = "^3.10"
-slack-sdk = "^3.27"
+slack-sdk = "^3.28"
 
 [tool.poetry.dev-dependencies]
 pytest = "^8.2"
