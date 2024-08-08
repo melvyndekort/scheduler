@@ -17,7 +17,7 @@ COPY . .
 RUN poetry build && pip install dist/*.whl
 
 
-FROM python:3-alpine3.19 AS runtime
+FROM python:3.13.0b2-alpine3.19 AS runtime
 
 LABEL org.opencontainers.image.source http://github.com/melvyndekort/scheduler
 
