@@ -17,7 +17,7 @@ APScheduler = "^3.11"
 slack-sdk = "^3.35"
 
 [tool.poetry.dev-dependencies]
-pytest = "^8.3"
+pytest = "^8.4"
 pytest-cov = "^6.1"
 pylint = "^3.3"
 
