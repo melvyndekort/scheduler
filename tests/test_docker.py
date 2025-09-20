@@ -2,7 +2,8 @@ import pytest
 import docker
 import os
 
-os.environ['SLACK_WEBHOOK'] = 'foobar'
+os.environ['NTFY_URL'] = 'https://localhost/topic'
+os.environ['NTFY_TOKEN'] = 'test_token'
 
 from scheduler import docker as sut
 from scheduler.job import Job

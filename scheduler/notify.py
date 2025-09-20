@@ -1,27 +1,16 @@
 import logging
 import os
-
-from slack_sdk.webhook import WebhookClient
+import requests
 
 logger = logging.getLogger(__name__)
 
 
 def notify(message):
-    if 'SLACK_WEBHOOK' in os.environ:
-        webhook = os.environ['SLACK_WEBHOOK']
-        client = WebhookClient(webhook)
-
-        response = client.send(
-            text=message,
-            blocks=[
-                {
-                    'type': 'section',
-                    'text': {
-                        'type': 'mrkdwn',
-                        'text': message
-                    }
-                }
-            ]
-        )
+    if 'NTFY_URL' in os.environ and 'NTFY_TOKEN' in os.environ:
+        url = os.environ['NTFY_URL']
+        token = os.environ['NTFY_TOKEN']
+        
+        headers = {'Authorization': f'Bearer {token}'}
+        requests.post(url, data=message, headers=headers)
     else:
-        logger.error('Slack webhook is not configured')
+        logger.error('NTFY_URL or NTFY_TOKEN is not configured')

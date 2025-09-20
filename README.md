@@ -18,3 +18,6 @@ Run scheduled jobs in Docker and trigger them manually via a web interface
 ## Environment variables
 
 The minimal environment variables are:
+
+- `NTFY_URL`: URL to your ntfy topic (e.g., `https://your-ntfy-server.com/your-topic`)
+- `NTFY_TOKEN`: Authentication token for your ntfy server
