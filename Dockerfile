@@ -8,7 +8,7 @@ RUN python -m venv /venv
 ENV PATH="/venv/bin:$PATH"
 
 
-FROM base as build
+FROM base AS build
 
 COPY pyproject.toml poetry.lock ./
 RUN poetry export -f requirements.txt | pip install -r /dev/stdin
@@ -19,7 +19,7 @@ RUN poetry build && pip install dist/*.whl
 
 FROM python:3-alpine3.19 AS runtime
 
-LABEL org.opencontainers.image.source https://github.com/melvyndekort/scheduler
+LABEL org.opencontainers.image.source=https://github.com/melvyndekort/scheduler
 
 COPY --from=build /venv /venv
 
