@@ -21,6 +21,8 @@ FROM python:3-alpine3.19 AS runtime
 
 LABEL org.opencontainers.image.source=https://github.com/melvyndekort/scheduler
 
+RUN apk add --no-cache supervisor
+
 COPY --from=build /venv /venv
 
 ENV PATH="/venv/bin:$PATH"
