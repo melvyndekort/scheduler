@@ -5,28 +5,28 @@ clean:
 	@rm -rf .pytest_cache dist __pycache__ */__pycache__
 
 install: clean
-	@poetry install
+	@uv sync --all-extras
 
 update-deps:
-	@poetry update
+	@uv sync --upgrade --all-extras
 
 test: install
-	@poetry run pytest
+	@uv run pytest
 
 build: test
-	@poetry build
+	@uv build
 
 full-build: clean
 	@docker image build -t scheduler .
 
 pylint:
-	@poetry run pylint scheduler
+	@uv run pylint scheduler
 
 dev: install
-	@CONFIG=tests/config.yml poetry run python3 -m scheduler.flask
+	@CONFIG=tests/config.yml uv run python3 -m scheduler.flask
 
 run: install
-	@CONFIG=tests/config.yml poetry run gunicorn -b 0.0.0.0:8000 --access-logfile '-' --error-logfile '-' scheduler.flask:app
+	@CONFIG=tests/config.yml uv run gunicorn -b 0.0.0.0:8000 --access-logfile '-' --error-logfile '-' scheduler.flask:app
 
 scheduler: install
-	@CONFIG=tests/config.yml poetry run python3 -m scheduler.main
+	@CONFIG=tests/config.yml uv run python3 -m scheduler.main
