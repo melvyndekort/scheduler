@@ -16,6 +16,7 @@ class Job:
     user: str = field(default='')
     environment: list[str] = field(default_factory=list)
     volumes: list[str] = field(default_factory=list)
+    keep_containers: bool = field(default=False)
 
     def is_running(self):
         if self.jobtype == 'exec':

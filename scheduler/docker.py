@@ -68,10 +68,10 @@ def start_run(job):
             command=job.command,
             name=job.name,
             detach=True,
-            auto_remove=True,
+            auto_remove=not job.keep_containers,
             environment=replace_environment(job.environment),
             network=job.network,
-            remove=True,
+            remove=not job.keep_containers,
             volumes=job.volumes
         )
         return container.short_id
