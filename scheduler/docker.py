@@ -12,8 +12,8 @@ client = docker.from_env()
 @ttl_cache(maxsize=128, ttl=1)
 def is_running(name):
     try:
-        client.containers.get(name)
-        return True
+        container = client.containers.get(name)
+        return container.status == 'running'
     except docker.errors.NotFound:
         return False
 
