@@ -15,6 +15,7 @@ class Job:
     container: str = field(default=None)
     user: str = field(default='')
     environment: list[str] = field(default_factory=list)
+    env_file: list[str] = field(default_factory=list)
     volumes: list[str] = field(default_factory=list)
     keep_containers: bool = field(default=False)
 

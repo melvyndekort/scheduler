@@ -70,6 +70,7 @@ def start_run(job):
             detach=True,
             auto_remove=not job.keep_containers,
             environment=replace_environment(job.environment),
+            env_file=job.env_file,
             network=job.network,
             remove=not job.keep_containers,
             volumes=job.volumes
