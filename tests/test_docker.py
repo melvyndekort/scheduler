@@ -115,6 +115,31 @@ def test_start_run(monkeypatch, docker_mock):
     result = sut.start_run(job)
     assert result == 42
 
+def test_start_run_with_env_file(monkeypatch, docker_mock):
+    monkeypatch.setattr(sut, 'client', docker_mock)
+    
+    called = False
+    def mock_run(**kwargs):
+        nonlocal called
+        called = True
+        assert kwargs.get('env_file') == ['/path/to/secrets.env']
+        class MockContainer:
+            short_id = 42
+        return MockContainer()
+    
+    docker_mock.containers.run = mock_run
+    
+    job = Job(
+        name='run-name',
+        jobtype='run',
+        schedule='run-schedule',
+        image='run-image',
+        env_file=['/path/to/secrets.env']
+    )
+    result = sut.start_run(job)
+    assert result == 42
+    assert called
+
 def test_start_run_failed(monkeypatch, docker_mock):
     monkeypatch.setattr(sut, 'client', docker_mock)
 
