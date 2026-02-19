@@ -60,17 +60,60 @@ def replace_environment(envlist):
     return copy
 
 
+def load_env_file(env_file_paths):
+    """Load environment variables from env files.
+    
+    Supports:
+    - Comments (lines starting with #)
+    - Empty lines
+    - Quoted values (single and double quotes)
+    - Special characters and non-ASCII
+    """
+    env_dict = {}
+    for env_file_path in env_file_paths:
+        try:
+            with open(env_file_path, 'r', encoding='utf-8') as f:
+                for line in f:
+                    line = line.strip()
+                    # Skip empty lines and comments
+                    if not line or line.startswith('#'):
+                        continue
+                    
+                    if '=' in line:
+                        key, value = line.split('=', 1)
+                        key = key.strip()
+                        value = value.strip()
+                        
+                        # Remove quotes if present
+                        if value and value[0] in ('"', "'") and value[-1] == value[0]:
+                            value = value[1:-1]
+                        
+                        env_dict[key] = value
+        except FileNotFoundError:
+            logger.warning(f'Env file not found: {env_file_path}')
+    return env_dict
+
+
 def start_run(job):
     logger.info('Running container %s', job.name)
     try:
+        # Merge environment from env_file and environment list
+        env_dict = load_env_file(job.env_file) if job.env_file else {}
+        env_list = replace_environment(job.environment)
+        
+        # Convert list to dict and merge
+        for env in env_list:
+            if '=' in env:
+                key, value = env.split('=', 1)
+                env_dict[key] = value
+        
         container = client.containers.run(
             image=job.image,
             command=job.command,
             name=job.name,
             detach=True,
             auto_remove=not job.keep_containers,
-            environment=replace_environment(job.environment),
-            env_file=job.env_file,
+            environment=env_dict,
             network=job.network,
             remove=not job.keep_containers,
             volumes=job.volumes

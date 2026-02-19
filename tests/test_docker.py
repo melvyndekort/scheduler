@@ -115,14 +115,31 @@ def test_start_run(monkeypatch, docker_mock):
     result = sut.start_run(job)
     assert result == 42
 
-def test_start_run_with_env_file(monkeypatch, docker_mock):
+def test_start_run_with_env_file(monkeypatch, docker_mock, tmp_path):
     monkeypatch.setattr(sut, 'client', docker_mock)
+    
+    # Create a temp env file with various formats
+    env_file = tmp_path / "secrets.env"
+    env_file.write_text("""# Comment line
+AWS_ACCESS_KEY_ID=test123
+AWS_SECRET_ACCESS_KEY="secret456"
+SPECIAL_CHARS='@,SNau86B~Yr4#.}5K'
+UNICODE_VALUE=café
+
+# Another comment
+EMPTY_VALUE=
+""", encoding='utf-8')
     
     called = False
     def mock_run(**kwargs):
         nonlocal called
         called = True
-        assert kwargs.get('env_file') == ['/path/to/secrets.env']
+        env = kwargs.get('environment', {})
+        assert env.get('AWS_ACCESS_KEY_ID') == 'test123'
+        assert env.get('AWS_SECRET_ACCESS_KEY') == 'secret456'
+        assert env.get('SPECIAL_CHARS') == "@,SNau86B~Yr4#.}5K"
+        assert env.get('UNICODE_VALUE') == 'café'
+        assert env.get('EMPTY_VALUE') == ''
         class MockContainer:
             short_id = 42
         return MockContainer()
@@ -134,7 +151,7 @@ def test_start_run_with_env_file(monkeypatch, docker_mock):
         jobtype='run',
         schedule='run-schedule',
         image='run-image',
-        env_file=['/path/to/secrets.env']
+        env_file=[str(env_file)]
     )
     result = sut.start_run(job)
     assert result == 42
