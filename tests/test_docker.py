@@ -29,6 +29,8 @@ def docker_mock():
                 raise docker.errors.NotFound('failure')
             elif name == 'exec-container':
                 return MockContainer()
+            # Default: container doesn't exist
+            raise docker.errors.NotFound(name)
 
         def run(self, **kwargs):
             if kwargs.get('image') == 'run-image-fail':

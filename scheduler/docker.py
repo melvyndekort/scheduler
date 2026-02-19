@@ -97,6 +97,15 @@ def load_env_file(env_file_paths):
 def start_run(job):
     logger.info('Running container %s', job.name)
     try:
+        # Remove existing container if it exists (stopped or exited)
+        try:
+            old_container = client.containers.get(job.name)
+            if old_container.status != 'running':
+                logger.info(f'Removing existing stopped container {job.name}')
+                old_container.remove()
+        except docker.errors.NotFound:
+            pass  # Container doesn't exist, that's fine
+        
         # Merge environment from env_file and environment list
         env_dict = load_env_file(job.env_file) if job.env_file else {}
         env_list = replace_environment(job.environment)
