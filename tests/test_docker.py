@@ -22,7 +22,9 @@ def docker_mock():
     class MockContainers():
         def get(self, name):
             if name == 'success':
-                return True
+                class RunningContainer:
+                    status = 'running'
+                return RunningContainer()
             elif name in ['failure','exec-container-fail']:
                 raise docker.errors.NotFound('failure')
             elif name == 'exec-container':
@@ -45,6 +47,23 @@ def test_is_running_success(monkeypatch, docker_mock):
 
     result = sut.is_running('success')
     assert result
+
+def test_is_running_stopped(monkeypatch, docker_mock):
+    monkeypatch.setattr(sut, 'client', docker_mock)
+    
+    class StoppedContainer:
+        status = 'exited'
+    
+    class MockContainers:
+        def get(self, name):
+            return StoppedContainer()
+    
+    class MockClient:
+        containers = MockContainers()
+    
+    monkeypatch.setattr(sut, 'client', MockClient())
+    result = sut.is_running('stopped')
+    assert not result
 
 def test_is_running_fail(monkeypatch, docker_mock):
     monkeypatch.setattr(sut, 'client', docker_mock)
