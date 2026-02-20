@@ -45,13 +45,13 @@ def docker_mock():
 
 
 def test_is_running_success(monkeypatch, docker_mock):
-    monkeypatch.setattr(sut, 'client', docker_mock)
+    monkeypatch.setattr(sut, 'get_client', lambda: docker_mock)
 
     result = sut.is_running('success')
     assert result
 
 def test_is_running_stopped(monkeypatch, docker_mock):
-    monkeypatch.setattr(sut, 'client', docker_mock)
+    monkeypatch.setattr(sut, 'get_client', lambda: docker_mock)
     
     class StoppedContainer:
         status = 'exited'
@@ -63,18 +63,18 @@ def test_is_running_stopped(monkeypatch, docker_mock):
     class MockClient:
         containers = MockContainers()
     
-    monkeypatch.setattr(sut, 'client', MockClient())
+    monkeypatch.setattr(sut, 'get_client', lambda: MockClient())
     result = sut.is_running('stopped')
     assert not result
 
 def test_is_running_fail(monkeypatch, docker_mock):
-    monkeypatch.setattr(sut, 'client', docker_mock)
+    monkeypatch.setattr(sut, 'get_client', lambda: docker_mock)
 
     result = sut.is_running('failure')
     assert not result
 
 def test_start_exec_success(monkeypatch, docker_mock):
-    monkeypatch.setattr(sut, 'client', docker_mock)
+    monkeypatch.setattr(sut, 'get_client', lambda: docker_mock)
     job = Job(
         name='exec-name',
         jobtype='exec',
@@ -85,7 +85,7 @@ def test_start_exec_success(monkeypatch, docker_mock):
     sut.start_exec(job)
 
 def test_start_exec_fail(monkeypatch, docker_mock):
-    monkeypatch.setattr(sut, 'client', docker_mock)
+    monkeypatch.setattr(sut, 'get_client', lambda: docker_mock)
 
     called = False
     class notify_mock:
@@ -107,7 +107,7 @@ def test_start_exec_fail(monkeypatch, docker_mock):
     assert called
 
 def test_start_run(monkeypatch, docker_mock):
-    monkeypatch.setattr(sut, 'client', docker_mock)
+    monkeypatch.setattr(sut, 'get_client', lambda: docker_mock)
     job = Job(
         name='run-name',
         jobtype='run',
@@ -118,7 +118,7 @@ def test_start_run(monkeypatch, docker_mock):
     assert result == 42
 
 def test_start_run_with_env_file(monkeypatch, docker_mock, tmp_path):
-    monkeypatch.setattr(sut, 'client', docker_mock)
+    monkeypatch.setattr(sut, 'get_client', lambda: docker_mock)
     
     # Create a temp env file with various formats
     env_file = tmp_path / "secrets.env"
@@ -160,7 +160,7 @@ EMPTY_VALUE=
     assert called
 
 def test_start_run_failed(monkeypatch, docker_mock):
-    monkeypatch.setattr(sut, 'client', docker_mock)
+    monkeypatch.setattr(sut, 'get_client', lambda: docker_mock)
 
     called = False
     class notify_mock:
