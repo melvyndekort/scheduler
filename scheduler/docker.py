@@ -6,13 +6,21 @@ from scheduler import notify
 
 logger = logging.getLogger(__name__)
 
-client = docker.from_env()
+_client = None
+
+
+def get_client():
+    """Lazy-load Docker client to avoid fork issues with gunicorn."""
+    global _client
+    if _client is None:
+        _client = docker.from_env()
+    return _client
 
 
 @ttl_cache(maxsize=128, ttl=1)
 def is_running(name):
     try:
-        container = client.containers.get(name)
+        container = get_client().containers.get(name)
         return container.status == 'running'
     except docker.errors.NotFound:
         return False
@@ -32,7 +40,7 @@ def start_exec(job):
         job.command
     )
     try:
-        container = client.containers.get(job.container)
+        container = get_client().containers.get(job.container)
         container.exec_run(
             job.command,
             user=job.user,
@@ -99,7 +107,7 @@ def start_run(job):
     try:
         # Remove existing container if it exists (stopped or exited)
         try:
-            old_container = client.containers.get(job.name)
+            old_container = get_client().containers.get(job.name)
             if old_container.status != 'running':
                 logger.info(f'Removing existing stopped container {job.name}')
                 old_container.remove()
@@ -116,7 +124,7 @@ def start_run(job):
                 key, value = env.split('=', 1)
                 env_dict[key] = value
         
-        container = client.containers.run(
+        container = get_client().containers.run(
             image=job.image,
             command=job.command,
             name=job.name,
