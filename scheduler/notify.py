@@ -15,11 +15,12 @@ def notify(message):
     if 'APPRISE_URL' in os.environ:
         url = os.environ['APPRISE_URL'].rstrip('/')
         tag = os.environ.get('APPRISE_TAG', 'homelab')
+        key = os.environ.get('APPRISE_KEY', 'apprise')
 
         payload = {
             'body': message,
             'tag': tag
         }
-        requests.post(f'{url}/notify', json=payload, timeout=10)
+        requests.post(f'{url}/notify/{key}', json=payload, timeout=10)
     else:
         logger.error('APPRISE_URL is not configured')

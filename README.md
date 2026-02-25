@@ -21,3 +21,4 @@ The minimal environment variables are:
 
 - `APPRISE_URL`: URL to your Apprise server (e.g., `https://apprise.mdekort.nl`)
 - `APPRISE_TAG`: Tag for notifications (optional, defaults to `homelab`)
+- `APPRISE_KEY`: Configuration key for stateful notifications (optional, defaults to `apprise`)
