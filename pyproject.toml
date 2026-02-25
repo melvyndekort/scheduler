@@ -27,3 +27,9 @@ packages = ["scheduler"]
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.pylint.main]
+extension-pkg-allow-list = ["docker", "cachetools.func"]
+
+[tool.pylint.messages_control]
+disable = ["import-error"]

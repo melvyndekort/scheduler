@@ -19,5 +19,5 @@ Run scheduled jobs in Docker and trigger them manually via a web interface
 
 The minimal environment variables are:
 
-- `NTFY_URL`: URL to your ntfy topic (e.g., `https://your-ntfy-server.com/your-topic`)
-- `NTFY_TOKEN`: Authentication token for your ntfy server
+- `APPRISE_URL`: URL to your Apprise server (e.g., `https://apprise.mdekort.nl`)
+- `APPRISE_TAG`: Tag for notifications (optional, defaults to `homelab`)

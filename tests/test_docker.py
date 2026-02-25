@@ -2,8 +2,8 @@ import pytest
 import docker
 import os
 
-os.environ['NTFY_URL'] = 'https://localhost/topic'
-os.environ['NTFY_TOKEN'] = 'test_token'
+os.environ['APPRISE_URL'] = 'https://localhost'
+os.environ['APPRISE_TAG'] = 'test'
 
 from scheduler import docker as sut
 from scheduler.job import Job
@@ -18,6 +18,12 @@ def docker_mock():
         def exec_run(self, cmd, **kwargs):
             assert cmd == 'exec-command'
             assert kwargs.get('user') == ''
+
+        def wait(self):
+            return {'StatusCode': 0}
+
+        def remove(self):
+            pass
 
     class MockContainers():
         def get(self, name):
@@ -144,6 +150,10 @@ EMPTY_VALUE=
         assert env.get('EMPTY_VALUE') == ''
         class MockContainer:
             short_id = 42
+            def wait(self):
+                return {'StatusCode': 0}
+            def remove(self):
+                pass
         return MockContainer()
     
     docker_mock.containers.run = mock_run

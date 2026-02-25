@@ -2,17 +2,18 @@ import pytest
 import os
 
 def test_send(monkeypatch):
-    os.environ['NTFY_URL'] = "https://localhost/topic"
-    os.environ['NTFY_TOKEN'] = "test_token"
+    os.environ['APPRISE_URL'] = "https://localhost"
+    os.environ['APPRISE_TAG'] = "test"
     from scheduler import notify
 
     called = False
-    def mock_post(url, data, headers):
+    def mock_post(url, json, timeout):
         nonlocal called
         called = True
-        assert url == 'https://localhost/topic'
-        assert data == 'foobar'
-        assert headers['Authorization'] == 'Bearer test_token'
+        assert url == 'https://localhost/notify'
+        assert json['body'] == 'foobar'
+        assert json['tag'] == 'test'
+        assert timeout == 10
 
     monkeypatch.setattr(notify.requests, 'post', mock_post)
     

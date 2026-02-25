@@ -1,3 +1,4 @@
+"""Docker container management for scheduled jobs."""
 import os
 import logging
 from cachetools.func import ttl_cache
@@ -6,19 +7,20 @@ from scheduler import notify
 
 logger = logging.getLogger(__name__)
 
-_client = None
+CLIENT = None
 
 
 def get_client():
     """Lazy-load Docker client to avoid fork issues with gunicorn."""
-    global _client
-    if _client is None:
-        _client = docker.from_env()
-    return _client
+    global CLIENT  # pylint: disable=global-statement
+    if CLIENT is None:
+        CLIENT = docker.from_env()
+    return CLIENT
 
 
 @ttl_cache(maxsize=128, ttl=1)
 def is_running(name):
+    """Check if a container is currently running."""
     try:
         container = get_client().containers.get(name)
         return container.status == 'running'
@@ -27,13 +29,16 @@ def is_running(name):
 
 
 def execute(job):
+    """Execute a job based on its type."""
     if job.jobtype == "exec":
         return start_exec(job)
-    elif job.jobtype == "run":
+    if job.jobtype == "run":
         return start_run(job)
+    return None
 
 
 def start_exec(job):
+    """Execute a command in an existing running container."""
     logger.info(
         'Executing command in running container %s: %s',
         job.container,
@@ -56,6 +61,7 @@ def start_exec(job):
 
 
 def replace_environment(envlist):
+    """Replace environment variable placeholders with actual values."""
     copy = []
     for env in envlist:
         if '${' in env:
@@ -70,7 +76,7 @@ def replace_environment(envlist):
 
 def load_env_file(env_file_paths):
     """Load environment variables from env files.
-    
+
     Supports:
     - Comments (lines starting with #)
     - Empty lines
@@ -86,58 +92,73 @@ def load_env_file(env_file_paths):
                     # Skip empty lines and comments
                     if not line or line.startswith('#'):
                         continue
-                    
+
                     if '=' in line:
                         key, value = line.split('=', 1)
                         key = key.strip()
                         value = value.strip()
-                        
+
                         # Remove quotes if present
                         if value and value[0] in ('"', "'") and value[-1] == value[0]:
                             value = value[1:-1]
-                        
+
                         env_dict[key] = value
         except FileNotFoundError:
-            logger.warning(f'Env file not found: {env_file_path}')
+            logger.warning('Env file not found: %s', env_file_path)
     return env_dict
 
 
 def start_run(job):
+    """Start a new container and wait for completion, removing only on success."""
     logger.info('Running container %s', job.name)
     try:
         # Remove existing container if it exists (stopped or exited)
         try:
             old_container = get_client().containers.get(job.name)
             if old_container.status != 'running':
-                logger.info(f'Removing existing stopped container {job.name}')
+                logger.info('Removing existing stopped container %s', job.name)
                 old_container.remove()
         except docker.errors.NotFound:
             pass  # Container doesn't exist, that's fine
-        
+
         # Merge environment from env_file and environment list
         env_dict = load_env_file(job.env_file) if job.env_file else {}
         env_list = replace_environment(job.environment)
-        
+
         # Convert list to dict and merge
         for env in env_list:
             if '=' in env:
                 key, value = env.split('=', 1)
                 env_dict[key] = value
-        
+
         container = get_client().containers.run(
             image=job.image,
             command=job.command,
             name=job.name,
             detach=True,
-            auto_remove=not job.keep_containers,
+            auto_remove=False,
             environment=env_dict,
             network=job.network,
-            remove=not job.keep_containers,
             volumes=job.volumes
         )
+
+        # Wait for container and check exit code
+        result = container.wait()
+        exit_code = result['StatusCode']
+
+        if exit_code == 0:
+            logger.info('Container %s completed successfully, removing', job.name)
+            container.remove()
+        else:
+            logger.error(
+                'Container %s failed with exit code %s, keeping for inspection',
+                job.name, exit_code
+            )
+            notify.notify(f'Container {job.name} failed with exit code {exit_code}')
+
         return container.short_id
-    except Exception as e:
-        message = f'Running container {job.name} failed: {str(e)}'
+    except Exception as exc:
+        message = f'Running container {job.name} failed: {str(exc)}'
         logger.error(message)
         notify.notify(message)
         raise
