@@ -33,6 +33,11 @@ def root_get():
     return redirect(webroot, code=302)
 
 
+@app.route('/health')
+def health():
+    return {'status': 'ok'}, 200
+
+
 @app.route(f'{webroot}/index.html', methods=['GET'])
 @app.route(f'{webroot}/', methods=['GET'])
 @app.route(webroot, methods=['GET'])
