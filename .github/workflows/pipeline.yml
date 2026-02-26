@@ -9,6 +9,7 @@ on:
       - '.github/workflows/pipeline.yml'
       - 'scheduler/**'
       - 'tests/**'
+      - 'docker/**'
       - 'pyproject.toml'
       - 'uv.lock'
       - 'Dockerfile'
