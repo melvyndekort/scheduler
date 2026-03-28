@@ -16,7 +16,7 @@ Scheduled job runner with a Flask web UI for manual triggering. Uses APScheduler
 - `tests/` — Test suite
 - `docker/` — `supervisord.conf` and `config.yml` for container runtime
 - `Dockerfile` — Multi-stage build, runs supervisord (scheduler + gunicorn)
-- `Makefile` — `install`, `test`, `lint` (pylint), `build`, `full-build`, `dev`, `run`, `scheduler`
+- `Makefile` — `install`, `test`, `lint`, `format` (pylint), `build`, `full-build`, `dev`, `run`, `scheduler`
 
 ## Deployment
 

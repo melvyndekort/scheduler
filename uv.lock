@@ -1001,7 +1001,7 @@ requires-dist = [
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.4" },
     { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=7.0" },
     { name = "pyyaml", specifier = ">=6.0" },
-    { name = "requests", specifier = "<2.33.0" },
+    { name = "requests", specifier = ">=2.32" },
 ]
 provides-extras = ["dev"]
 
