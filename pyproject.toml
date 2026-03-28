@@ -7,7 +7,7 @@ requires-python = ">=3.9"
 dependencies = [
     "PyYAML>=6.0",
     "docker>=7.1",
-    "requests<2.33.0", # Temporarily pin version because of https://github.com/docker/docker-py/issues/3256
+    "requests>=2.32",
     "Flask>=3.1",
     "gunicorn>=23.0",
     "cachetools>=6.2",
