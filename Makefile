@@ -19,6 +19,9 @@ build: test
 full-build: clean
 	@docker image build -t scheduler .
 
+lint: install
+	@uv run pylint scheduler
+
 pylint:
 	@uv run pylint scheduler
 
