@@ -22,8 +22,7 @@ full-build: clean
 lint: install
 	@uv run pylint scheduler
 
-pylint:
-	@uv run pylint scheduler
+pylint: lint
 
 dev: install
 	@CONFIG=tests/config.yml uv run python3 -m scheduler.flask
@@ -33,3 +32,7 @@ run: install
 
 scheduler: install
 	@CONFIG=tests/config.yml uv run python3 -m scheduler.main
+
+format: install
+	@uv run ruff format .
+	@uv run ruff check --fix .
