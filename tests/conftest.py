@@ -32,6 +32,6 @@ def config_module(config):
     from scheduler import config as module
     importlib.reload(module)
     yield module
-    with open(module.config, 'w') as file:
+    with open(module.CONFIG_PATH, 'w') as file:
         file.write(DEFAULT_CONFIG_YAML)
     module.reload()

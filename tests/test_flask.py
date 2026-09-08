@@ -21,7 +21,7 @@ def test_index_reflects_config_changes_without_restart(config_module):
         response = client.get(webroot)
         assert b'* * * * *' in response.data
 
-        with open(config_module.config, 'w') as f:
+        with open(config_module.CONFIG_PATH, 'w') as f:
             f.write('''
 jobs:
   - name: 'updated-job'

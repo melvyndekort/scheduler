@@ -21,7 +21,7 @@ def test_get_jobs(config):
 
 
 def test_reload_updates_jobs(config_module):
-    with open(config_module.config, 'w') as f:
+    with open(config_module.CONFIG_PATH, 'w') as f:
         f.write('''
 jobs:
   - name: 'updated'
@@ -39,7 +39,7 @@ jobs:
 def test_reload_invalid_yaml_keeps_last_known_good(config_module):
     good_jobs = config_module.get_jobs()
 
-    with open(config_module.config, 'w') as f:
+    with open(config_module.CONFIG_PATH, 'w') as f:
         f.write('jobs: [unclosed')
 
     result = config_module.reload()
@@ -51,7 +51,7 @@ def test_reload_invalid_yaml_keeps_last_known_good(config_module):
 def test_reload_malformed_job_keeps_last_known_good(config_module):
     good_jobs = config_module.get_jobs()
 
-    with open(config_module.config, 'w') as f:
+    with open(config_module.CONFIG_PATH, 'w') as f:
         f.write('''
 jobs:
   - name: 'missing-required-fields'

@@ -3,7 +3,7 @@ name = "scheduler"
 version = "0.1.0"
 description = ""
 authors = [{name = "Melvyn de Kort", email = "melvyn@mdekort.nl"}]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 dependencies = [
     "PyYAML>=6.0.3",
     "docker>=7.2.0",

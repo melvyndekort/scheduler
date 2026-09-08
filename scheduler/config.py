@@ -8,13 +8,13 @@ from scheduler.job import Job
 logger = logging.getLogger(__name__)
 
 if 'CONFIG' in os.environ:
-    config = os.environ['CONFIG']
+    CONFIG_PATH = os.environ['CONFIG']
 else:
-    config = '/config/config.yml'
-if not Path(config).is_file():
-    raise FileNotFoundError(f'No valid config file found: {config}')
+    CONFIG_PATH = '/config/config.yml'
+if not Path(CONFIG_PATH).is_file():
+    raise FileNotFoundError(f'No valid config file found: {CONFIG_PATH}')
 
-with open(config, 'r', encoding='utf-8') as stream:
+with open(CONFIG_PATH, 'r', encoding='utf-8') as stream:
     try:
         data = yaml.safe_load(stream)
     except yaml.YAMLError as e:
@@ -51,11 +51,11 @@ def reload():
     config in place.
     """
     try:
-        with open(config, 'r', encoding='utf-8') as file:
+        with open(CONFIG_PATH, 'r', encoding='utf-8') as file:
             new_data = yaml.safe_load(file)
         new_jobs = [Job(**elem) for elem in new_data['jobs']]
     except (yaml.YAMLError, TypeError, KeyError) as e:
-        logger.error('Failed to reload %s, keeping last-known-good config: %s', config, e)
+        logger.error('Failed to reload %s, keeping last-known-good config: %s', CONFIG_PATH, e)
         return None
     data.clear()
     data.update(new_data)
