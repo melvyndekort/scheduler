@@ -1,3 +1,4 @@
+"""Loads and hot-reloads job definitions from config.yml."""
 import os
 import logging
 from pathlib import Path
@@ -11,7 +12,7 @@ if 'CONFIG' in os.environ:
 else:
     config = '/config/config.yml'
 if not Path(config).is_file():
-    raise Exception('No valid config file found')
+    raise FileNotFoundError(f'No valid config file found: {config}')
 
 with open(config, 'r', encoding='utf-8') as stream:
     try:
@@ -22,6 +23,7 @@ with open(config, 'r', encoding='utf-8') as stream:
 
 
 def get_webroot():
+    """Return the configured webroot, preferring the WEBROOT env var."""
     if 'WEBROOT' in os.environ:
         webroot = os.environ['WEBROOT']
     elif data.get('webroot'):
@@ -33,6 +35,7 @@ def get_webroot():
 
 
 def get_jobs():
+    """Build the current list of Job objects from the loaded config."""
     jobs = []
     for elem in data['jobs']:
         job = Job(**elem)

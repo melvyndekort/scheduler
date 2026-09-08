@@ -1,4 +1,5 @@
 """Docker container management for scheduled jobs."""
+import functools
 import os
 import logging
 from cachetools.func import ttl_cache
@@ -7,15 +8,11 @@ from scheduler import notify
 
 logger = logging.getLogger(__name__)
 
-CLIENT = None
 
-
+@functools.cache
 def get_client():
     """Lazy-load Docker client to avoid fork issues with gunicorn."""
-    global CLIENT  # pylint: disable=global-statement
-    if CLIENT is None:
-        CLIENT = docker.from_env()
-    return CLIENT
+    return docker.from_env()
 
 
 @ttl_cache(maxsize=128, ttl=1)

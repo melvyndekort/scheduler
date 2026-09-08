@@ -1,5 +1,7 @@
-from flask import Flask, render_template, request, redirect
+"""Flask UI for viewing and manually triggering scheduled jobs."""
 from logging.config import dictConfig
+
+from flask import Flask, render_template, request, redirect
 from scheduler import config, docker
 
 dictConfig({
@@ -38,11 +40,13 @@ def current_jobs():
 
 @app.route('/')
 def root_get():
+    """Redirect the bare root path to the configured webroot."""
     return redirect(webroot, code=302)
 
 
 @app.route('/health')
 def health():
+    """Liveness/readiness probe endpoint."""
     return {'status': 'ok'}, 200
 
 
@@ -50,6 +54,7 @@ def health():
 @app.route(f'{webroot}/', methods=['GET'])
 @app.route(webroot, methods=['GET'])
 def index_get():
+    """Render the job table."""
     return render_template(
         'index.html',
         docker_jobs=current_jobs()
@@ -57,6 +62,7 @@ def index_get():
 
 
 def show_success(message, jobs):
+    """Render the job table with a success banner."""
     return render_template(
             'index.html',
             trigger=message,
@@ -65,6 +71,7 @@ def show_success(message, jobs):
 
 
 def show_error(message, jobs):
+    """Render the job table with an error banner."""
     return render_template(
         'index.html',
         error=message,
@@ -76,6 +83,7 @@ def show_error(message, jobs):
 @app.route(f'{webroot}/', methods=['POST'])
 @app.route(webroot, methods=['POST'])
 def post_trigger():
+    """Handle a manual job trigger from the web UI."""
     jobs = current_jobs()
     jobname = request.form.get('triggerJobName')
 
@@ -88,9 +96,9 @@ def post_trigger():
     if result:
         message = f'Job "{jobname}" was successfully triggered'
         return show_success(message, jobs)
-    else:
-        message = f'Job "{jobname}" could not be triggered'
-        return show_error(message, jobs)
+
+    message = f'Job "{jobname}" could not be triggered'
+    return show_error(message, jobs)
 
 
 if __name__ == '__main__':

@@ -1,8 +1,11 @@
+"""Entry point: schedules jobs from config.yml and keeps them in sync."""
 import logging
 import os
 
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.cron import CronTrigger
+
+import docker as docker_sdk
 from scheduler import config, docker
 
 FORMAT = '%(asctime)s %(levelname)s %(name)s: %(message)s'
@@ -16,13 +19,14 @@ scheduler = BlockingScheduler()
 
 
 def run_job(job):
+    """Trigger a single job's docker action, logging (not raising) on failure."""
     logger.info('Triggering job %s', job.name)
     try:
         if job.jobtype == 'exec':
             docker.start_exec(job)
         elif job.jobtype == 'run':
             docker.start_run(job)
-    except Exception as e:
+    except (docker_sdk.errors.DockerException, OSError, KeyError, ValueError) as e:
         logger.error(
             'An exception occured while triggering %s: %s',
             job.name,
@@ -70,6 +74,7 @@ def sync_jobs():
 
 
 def main():
+    """Schedule all configured jobs plus the config-reload poller, then run."""
     for job in jobs:
         _add_job(job)
 

@@ -27,7 +27,7 @@ def test_run_job_success(monkeypatch, config):
         def start_run(job):
             assert job.name == 'foobar'
 
-    monkeypatch.setattr(main, 'docker', mock_docker())
+    monkeypatch.setattr(main, 'docker', mock_docker)
 
     job = Job(
         name='foobar',
@@ -137,7 +137,7 @@ def test_run_job_failure(monkeypatch, config):
 
     class mock_docker:
         def start_run(job):
-            raise Exception()
+            raise KeyError('AWS_SECRET')  # e.g. a missing ${ENV_VAR} placeholder
 
     class mock_logger:
         def info(self, message, *args):
@@ -146,7 +146,7 @@ def test_run_job_failure(monkeypatch, config):
         def error(self, message, *args):
             assert 'foobar' in args
 
-    monkeypatch.setattr(main, 'docker', mock_docker())
+    monkeypatch.setattr(main, 'docker', mock_docker)
     monkeypatch.setattr(main, 'logger', mock_logger())
 
     job = Job(
