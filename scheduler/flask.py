@@ -91,6 +91,9 @@ def post_trigger():
         return show_error('No valid job was triggered', jobs)
 
     job = next((i for i in jobs if i.name == jobname), None)
+    if job is None:
+        return show_error(f'Job "{jobname}" no longer exists', jobs)
+
     result = docker.execute(job)
 
     if result:
@@ -102,4 +105,4 @@ def post_trigger():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8000, debug=True)
+    app.run(host='0.0.0.0', port=8000, debug=False)

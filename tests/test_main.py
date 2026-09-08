@@ -17,7 +17,7 @@ def test_main_add_job(monkeypatch, config):
     main.main()
     jobs = main.scheduler.get_jobs()
     job_ids = {job.id for job in jobs}
-    assert job_ids == {'foobar', '__config_reload__'}
+    assert job_ids == {'foobar', main.RELOAD_JOB_ID}
     assert called
 
 def test_run_job_success(monkeypatch, config):
@@ -43,6 +43,16 @@ def _fresh_scheduler(monkeypatch, main):
     fresh = BlockingScheduler()
     monkeypatch.setattr(main, 'scheduler', fresh)
     return fresh
+
+
+def test_add_job_rejects_reserved_name(monkeypatch, config):
+    from scheduler import main
+
+    _fresh_scheduler(monkeypatch, main)
+    reserved_job = Job(name=main.RELOAD_JOB_ID, jobtype='run', schedule='* * * * *')
+
+    with pytest.raises(ValueError):
+        main._add_job(reserved_job)
 
 
 def test_sync_jobs_adds_new_job(monkeypatch, config):

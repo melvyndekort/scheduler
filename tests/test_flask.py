@@ -64,3 +64,14 @@ def test_post_trigger_missing_jobname(config_module):
         response = client.post(flask_module.webroot, data={})
         assert response.status_code == 200
         assert b'No valid job was triggered' in response.data
+
+
+def test_post_trigger_unknown_jobname(config_module):
+    """A job removed from config.yml between page load and submit should
+    show an error, not crash (docker.execute(None) would otherwise blow up)."""
+    from scheduler import flask as flask_module
+
+    with flask_module.app.test_client() as client:
+        response = client.post(flask_module.webroot, data={'triggerJobName': 'gone'})
+        assert response.status_code == 200
+        assert b'no longer exists' in response.data

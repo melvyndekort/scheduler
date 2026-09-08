@@ -13,6 +13,7 @@ logging.basicConfig(level=logging.INFO, format=FORMAT)
 logger = logging.getLogger(__name__)
 
 CONFIG_RELOAD_INTERVAL = int(os.environ.get('CONFIG_RELOAD_INTERVAL', '10'))
+RELOAD_JOB_ID = '__config_reload__'
 
 jobs = config.get_jobs()
 scheduler = BlockingScheduler()
@@ -35,6 +36,10 @@ def run_job(job):
 
 
 def _add_job(job):
+    if job.name == RELOAD_JOB_ID:
+        raise ValueError(
+            f'Job name "{RELOAD_JOB_ID}" is reserved for the internal config-reload poller'
+        )
     scheduler.add_job(
         func=run_job,
         trigger=CronTrigger.from_crontab(job.schedule),
@@ -82,8 +87,8 @@ def main():
         func=sync_jobs,
         trigger='interval',
         seconds=CONFIG_RELOAD_INTERVAL,
-        id='__config_reload__',
-        name='__config_reload__'
+        id=RELOAD_JOB_ID,
+        name=RELOAD_JOB_ID
     )
 
     logger.info('Starting scheduler')
