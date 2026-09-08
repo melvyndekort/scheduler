@@ -25,7 +25,15 @@ dictConfig({
 app = Flask(__name__)
 
 webroot = config.get_webroot()
-jobs = config.get_jobs()
+
+
+def current_jobs():
+    """Reload config.yml and return the current job list.
+
+    On invalid YAML, logs the error and returns the last-known-good jobs.
+    """
+    config.reload()
+    return config.get_jobs()
 
 
 @app.route('/')
@@ -44,7 +52,7 @@ def health():
 def index_get():
     return render_template(
         'index.html',
-        docker_jobs=jobs
+        docker_jobs=current_jobs()
     )
 
 
@@ -68,6 +76,7 @@ def show_error(message, jobs):
 @app.route(f'{webroot}/', methods=['POST'])
 @app.route(webroot, methods=['POST'])
 def post_trigger():
+    jobs = current_jobs()
     jobname = request.form.get('triggerJobName')
 
     if not jobname:
