@@ -1,6 +1,6 @@
 # scheduler
 
-> For global standards, way-of-workings, and pre-commit checklist, see `~/.kiro/steering/behavior.md`
+> For global standards, way-of-workings, and pre-commit checklist, see `~/.claude/CLAUDE.md`
 
 ## Role
 
