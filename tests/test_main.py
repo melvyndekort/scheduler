@@ -20,6 +20,34 @@ def test_main_add_job(monkeypatch, config):
     assert job_ids == {'foobar', main.RELOAD_JOB_ID}
     assert called
 
+def test_on_job_event_missed(monkeypatch, config):
+    from apscheduler.events import EVENT_JOB_MISSED, JobExecutionEvent
+    from scheduler import main
+
+    calls = []
+    monkeypatch.setattr(main.notify, 'notify', calls.append)
+
+    event = JobExecutionEvent(EVENT_JOB_MISSED, 'foobar', 'default', None)
+    main._on_job_event(event)
+
+    assert calls == ['Job foobar missed its scheduled run']
+
+
+def test_on_job_event_error(monkeypatch, config):
+    from apscheduler.events import EVENT_JOB_ERROR, JobExecutionEvent
+    from scheduler import main
+
+    calls = []
+    monkeypatch.setattr(main.notify, 'notify', calls.append)
+
+    event = JobExecutionEvent(
+        EVENT_JOB_ERROR, 'foobar', 'default', None, exception=ValueError('boom')
+    )
+    main._on_job_event(event)
+
+    assert calls == ['Job foobar raised an unhandled error: boom']
+
+
 def test_run_job_success(monkeypatch, config):
     from scheduler import main
 

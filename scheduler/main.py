@@ -2,11 +2,13 @@
 import logging
 import os
 
+from apscheduler.events import EVENT_JOB_ERROR, EVENT_JOB_MISSED
+from apscheduler.executors.pool import ThreadPoolExecutor
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.cron import CronTrigger
 
 import docker as docker_sdk
-from scheduler import config, docker
+from scheduler import config, docker, notify
 
 FORMAT = '%(asctime)s %(levelname)s %(name)s: %(message)s'
 logging.basicConfig(level=logging.INFO, format=FORMAT)
@@ -14,9 +16,26 @@ logger = logging.getLogger(__name__)
 
 CONFIG_RELOAD_INTERVAL = int(os.environ.get('CONFIG_RELOAD_INTERVAL', '10'))
 RELOAD_JOB_ID = '__config_reload__'
+# Default executor only has 10 threads, and each 'run' job holds one for its
+# entire container lifetime. Give some headroom over the job count so a busy
+# day of overlapping backups/syncs can't silently starve other jobs.
+MAX_WORKERS = int(os.environ.get('MAX_WORKERS', '20'))
 
 jobs = config.get_jobs()
-scheduler = BlockingScheduler()
+scheduler = BlockingScheduler(executors={'default': ThreadPoolExecutor(MAX_WORKERS)})
+
+
+def _on_job_event(event):
+    """Alert when a job misses its scheduled run or raises unexpectedly.
+
+    run_job() already logs/notifies its own docker-related failures; this
+    is the backstop for anything that gets past that (executor exhaustion,
+    a bug, an exception type run_job doesn't catch).
+    """
+    if event.code == EVENT_JOB_MISSED:
+        notify.notify(f'Job {event.job_id} missed its scheduled run')
+    else:
+        notify.notify(f'Job {event.job_id} raised an unhandled error: {event.exception}')
 
 
 def run_job(job):
@@ -90,6 +109,7 @@ def main():
         id=RELOAD_JOB_ID,
         name=RELOAD_JOB_ID
     )
+    scheduler.add_listener(_on_job_event, EVENT_JOB_MISSED | EVENT_JOB_ERROR)
 
     logger.info('Starting scheduler')
     scheduler.start()
