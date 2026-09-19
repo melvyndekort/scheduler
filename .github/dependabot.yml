@@ -2,24 +2,6 @@ version: 2
 
 updates:
   - package-ecosystem: "github-actions"
-  - package-ecosystem: "uv"
-  - package-ecosystem: "docker"
-    directory: "/docker"
-    schedule:
-      interval: "daily"
-    rebase-strategy: "auto"
-    assignees:
-      - "melvyndekort"
-    reviewers:
-      - "melvyndekort"
-    directory: "/"
-    schedule:
-      interval: "daily"
-    rebase-strategy: "auto"
-    assignees:
-      - "melvyndekort"
-    reviewers:
-      - "melvyndekort"
     directory: "/"
     schedule:
       interval: "weekly"
@@ -28,9 +10,22 @@ updates:
       - "melvyndekort"
     reviewers:
       - "melvyndekort"
+
+  - package-ecosystem: "uv"
     directory: "/"
     schedule:
       interval: "daily"
+    rebase-strategy: "auto"
+    assignees:
+      - "melvyndekort"
+    reviewers:
+      - "melvyndekort"
+
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    rebase-strategy: "auto"
     assignees:
       - "melvyndekort"
     reviewers:
